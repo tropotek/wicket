@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Visibility;
+use App\Support\SearchIndex;
 use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -45,7 +46,15 @@ class Page extends Model
             }
 
             PageRedirect::where('slug', $page->slug)->delete();
+
+            if ($page->wasRecentlyCreated || $page->wasChanged(['title', 'category'])) {
+                app(SearchIndex::class)->sync($page);
+            }
         });
+
+        // Trashed pages leave search; restored ones come back. (New revisions index via Content.)
+        static::deleted(fn (Page $page) => app(SearchIndex::class)->remove($page->id));
+        static::restored(fn (Page $page) => app(SearchIndex::class)->sync($page));
     }
 
     protected function casts(): array

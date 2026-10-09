@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\LinkIndex;
+use App\Support\SearchIndex;
 use Database\Factories\ContentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,12 +26,13 @@ class Content extends Model
         'description' => '',
     ];
 
-    /** A new revision is the page's current one: re-index its links. */
+    /** A new revision is the page's current one: re-index its links and search text. */
     protected static function booted(): void
     {
         static::created(function (Content $content) {
             if ($content->page) {
                 app(LinkIndex::class)->sync($content->page, $content->html);
+                app(SearchIndex::class)->sync($content->page);
             }
         });
     }
