@@ -124,7 +124,7 @@
                     </div>
 
                     <div class="card-footer p-1 d-flex gap-1 justify-content-end">
-                        @if ($picker && $e['type'] === 'file' && ($picker === 'file' || $e['image']))
+                        @if ($picker && $e['type'] === 'file' && ($picker === 'file' || $e[$picker]))
                             <button type="button" class="btn btn-sm btn-primary me-auto"
                                     @click="window.parent.postMessage({ mceAction: 'wicketMediaPick', url: @js($e['url']), name: @js($e['name']) }, window.location.origin)">
                                 {{ __('Select') }}

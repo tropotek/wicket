@@ -234,6 +234,19 @@ class MediaBrowserTest extends TestCase
         $this->actingAs($this->editor)->get('/media')->assertDontSee('wicketMediaPick', false);
     }
 
+    public function test_media_picker_offers_video_and_audio_only(): void
+    {
+        $this->disk->put('clip.mp4', 'v');
+        $this->disk->put('song.mp3', 'a');
+        $this->disk->put('pic.png', 'p');
+
+        $this->actingAs($this->editor)->get('/media?picker=media')
+            ->assertOk()
+            ->assertSee("'\\/data\\/media\\/clip.mp4'", false)
+            ->assertSee("'\\/data\\/media\\/song.mp3'", false)
+            ->assertDontSee("'\\/data\\/media\\/pic.png'", false);
+    }
+
     public function test_non_htmx_writes_redirect_to_the_folder(): void
     {
         $this->disk->makeDirectory('docs');

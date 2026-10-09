@@ -27,6 +27,9 @@ class MediaStore
 
     public const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
+    /** Video and audio TinyMCE's media dialog can embed. */
+    public const MEDIA_EXTENSIONS = ['mp4', 'webm', 'ogv', 'mp3', 'm4a', 'ogg', 'wav'];
+
     /**
      * Normalise a user-supplied path relative to the media root ('' is the root).
      * Rejects absolute, empty, dot-prefixed (incl. `..`) and NUL/backslash segments, and anything
@@ -66,7 +69,7 @@ class MediaStore
     /**
      * Visible folders, then files, in $dir, each sorted by name.
      *
-     * @return Collection<int, array{type: string, path: string, name: string, size: ?int, modified: int, image: bool, url: ?string}>
+     * @return Collection<int, array{type: string, path: string, name: string, size: ?int, modified: int, image: bool, media: bool, url: ?string}>
      */
     public function list(string $dir): Collection
     {
@@ -77,6 +80,7 @@ class MediaStore
             'size' => $type === 'file' ? $this->disk()->size($path) : null,
             'modified' => $this->disk()->lastModified($path),
             'image' => $type === 'file' && $this->isImage($path),
+            'media' => $type === 'file' && in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), self::MEDIA_EXTENSIONS, true),
             'url' => $type === 'file' ? $this->url($path) : null,
         ];
         $visible = fn (string $path) => ! str_starts_with(basename($path), '.');

@@ -188,12 +188,12 @@ class MediaController extends Controller
         throw ValidationException::withMessages($errors->toArray());
     }
 
-    /** image | file when the browser runs as TinyMCE's picker. */
+    /** image | media | file when the browser runs as TinyMCE's picker. */
     private function picker(Request $request): ?string
     {
         $picker = $request->input('picker');
 
-        return in_array($picker, ['image', 'file'], true) ? $picker : null;
+        return in_array($picker, ['image', 'media', 'file'], true) ? $picker : null;
     }
 
     /** @return array<string, mixed> */

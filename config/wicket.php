@@ -40,6 +40,7 @@ return [
     */
     'media_extensions' => [
         'jpg', 'jpeg', 'png', 'gif', 'webp',
+        'mp4', 'webm', 'ogv', 'mp3', 'm4a', 'ogg', 'wav',
         'pdf', 'txt', 'csv', 'zip', 'rtf', 'vcf', 'json', 'psd',
         'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp',
     ],
