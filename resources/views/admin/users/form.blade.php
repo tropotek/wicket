@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @php($editing = $user->exists)
-@php($self = $editing && $user->is(auth()->user()))
+{{-- Role/active are locked when editing yourself (UserPolicy::changeAccess) --}}
+@php($locked = auth()->user()->cannot('changeAccess', $user))
 
 @section('title', ($editing ? __('Edit :username', ['username' => $user->username]) : __('New user')).' · '.config('app.name'))
 
@@ -61,28 +62,28 @@
                             <div class="col-md-6">
                                 <label for="role" class="form-label">{{ __('Role') }}</label>
                                 <select id="role" name="role" class="form-select @error('role') is-invalid @enderror"
-                                        @disabled($self)>
+                                        @disabled($locked)>
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->value }}" @selected(old('role', $user->role?->value ?? 'member') === $role->value)>
                                             {{ $role->label() }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @if ($self)
+                                @cannot('changeAccess', $user)
                                     {{-- Disabled fields aren't submitted --}}
                                     <input type="hidden" name="role" value="{{ $user->role->value }}">
                                     <div class="form-text">{{ __('You cannot change your own role.') }}</div>
-                                @endif
+                                @endcannot
                                 @error('role')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6 d-flex align-items-end">
                                 <div class="form-check form-switch mb-2">
-                                    <input type="hidden" name="active" value="{{ $self ? '1' : '0' }}">
+                                    <input type="hidden" name="active" value="{{ $locked ? '1' : '0' }}">
                                     <input id="active" type="checkbox" name="active" value="1" role="switch"
                                            class="form-check-input @error('active') is-invalid @enderror"
-                                           @checked(old('active', $user->exists ? $user->active : true)) @disabled($self)>
+                                           @checked(old('active', $user->exists ? $user->active : true)) @disabled($locked)>
                                     <label for="active" class="form-check-label">{{ __('Active') }}</label>
                                     @error('active')
                                         <div class="invalid-feedback">{{ $message }}</div>

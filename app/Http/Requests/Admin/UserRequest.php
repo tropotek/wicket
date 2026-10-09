@@ -6,15 +6,23 @@ use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Validator;
 
 /**
- * Admin create/update of a user. Route-level `role:admin` does the authorising.
+ * Admin create/update of a user.
  */
 class UserRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        $target = $this->route('user');
+
+        return $target ? Gate::allows('update', $target) : Gate::allows('create', User::class);
+    }
+
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
      */
@@ -33,8 +41,8 @@ class UserRequest extends FormRequest
     }
 
     /**
-     * Admins can't lock themselves out, and the last active admin can't be
-     * demoted or deactivated.
+     * Role/active changes need the `changeAccess` ability (not on yourself),
+     * and the last active admin can't be demoted or deactivated.
      *
      * @return array<int, callable>
      */
@@ -50,11 +58,11 @@ class UserRequest extends FormRequest
             $demoting = $this->input('role') !== Role::Admin->value;
             $deactivating = ! $this->boolean('active');
 
-            if ($target->is($this->user())) {
+            if (Gate::denies('changeAccess', $target)) {
                 if ($this->input('role') !== $target->role->value) {
                     $validator->errors()->add('role', __('You cannot change your own role.'));
                 }
-                if ($deactivating) {
+                if ($this->boolean('active') !== $target->active) {
                     $validator->errors()->add('active', __('You cannot deactivate yourself.'));
                 }
 

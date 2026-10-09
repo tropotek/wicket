@@ -38,11 +38,13 @@
                             {{ $user->last_login_at?->diffForHumans() ?? __('never') }}
                         </td>
                         <td class="text-end">
-                            {{-- Full navigation, not an HTMX table swap --}}
-                            <a href="{{ route('admin.users.edit', $user) }}" hx-boost="false"
-                               class="btn btn-sm btn-outline-secondary" aria-label="{{ __('Edit :username', ['username' => $user->username]) }}">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
+                            @can('update', $user)
+                                {{-- Full navigation, not an HTMX table swap --}}
+                                <a href="{{ route('admin.users.edit', $user) }}" hx-boost="false"
+                                   class="btn btn-sm btn-outline-secondary" aria-label="{{ __('Edit :username', ['username' => $user->username]) }}">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                            @endcan
                         </td>
                     </tr>
                 @empty

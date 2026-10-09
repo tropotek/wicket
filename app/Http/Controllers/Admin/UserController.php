@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -18,6 +19,8 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
+        Gate::authorize('viewAny', User::class);
+
         $q = trim((string) $request->query('q'));
 
         $users = User::query()
@@ -36,9 +39,12 @@ class UserController extends Controller
 
     public function create(): View
     {
+        Gate::authorize('create', User::class);
+
         return view('admin.users.form', ['user' => new User, 'roles' => Role::cases()]);
     }
 
+    /** Authorised by UserRequest. */
     public function store(UserRequest $request): RedirectResponse
     {
         $user = new User($request->safe()->only(['username', 'name', 'email', 'password']));
@@ -54,9 +60,12 @@ class UserController extends Controller
 
     public function edit(User $user): View
     {
+        Gate::authorize('update', $user);
+
         return view('admin.users.form', ['user' => $user, 'roles' => Role::cases()]);
     }
 
+    /** Authorised by UserRequest. */
     public function update(UserRequest $request, User $user): RedirectResponse
     {
         $user->fill($request->safe()->only(['username', 'name', 'email']));
