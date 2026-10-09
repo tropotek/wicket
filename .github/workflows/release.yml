@@ -1,10 +1,11 @@
-# Release: on a v* tag, test, build the prod image natively for amd64 and arm64, publish to GHCR.
+# Release: on a v* tag, build the prod image natively for amd64 and arm64, publish to GHCR.
 #
 # Zero-cost by design (public repo):
 #   - standard GitHub-hosted runners only (ubuntu-24.04, ubuntu-24.04-arm) — free for public repos.
 #     Never switch to "larger" runners: those are billed even for public repositories.
 #   - runs only on v* tags and manual dispatch; no push / pull_request triggers.
 #   - timeouts on every job, one run per ref (newer cancels older).
+#   - no test job: tests run locally before tagging (bin/release).
 #   - the image is linked to this public repo, so the GHCR package is public (free storage/transfer).
 name: release
 
@@ -22,41 +23,11 @@ permissions:
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}
-  # Only tags publish; a manual run on a branch builds and tests without pushing.
+  # Only tags publish; a manual run on a branch builds without pushing.
   PUBLISH: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
 jobs:
-  test:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.4"
-          extensions: pdo_sqlite, intl, gd, zip
-          coverage: none
-
-      - name: Composer cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.composer/cache
-          key: composer-${{ hashFiles('composer.lock') }}
-
-      - run: composer install --no-interaction --no-progress --prefer-dist
-
-      - name: App environment
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-          # Tests assert Vite dev-server asset URLs; a hot file gives those without building assets.
-          echo "http://localhost:5173" > public/hot
-
-      - run: php artisan test
-
   build:
-    needs: test
     timeout-minutes: 30
     permissions:
       contents: read
