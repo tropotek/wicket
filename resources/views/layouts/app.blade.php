@@ -42,6 +42,12 @@
                     <i class="fa-solid" :class="theme === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
                 </button>
 
+                @can('create', App\Models\Page::class)
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('pages.create') }}">
+                        <i class="fa-solid fa-plus me-1"></i>{{ __('New page') }}
+                    </a>
+                @endcan
+
                 @auth
                     <div class="dropdown">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"

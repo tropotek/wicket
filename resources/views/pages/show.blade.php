@@ -13,18 +13,26 @@
 
 @section('content')
     <article class="wk-page">
-        @if ($page->title_visible || ! $page->publish)
-            <header class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                @if ($page->title_visible)
-                    <h1 class="h2 mb-0 me-auto">{{ $page->title }}</h1>
-                @endif
-                @can('update', $page)
-                    @unless ($page->publish)
-                        <span class="badge text-bg-warning">{{ __('Unpublished') }}</span>
-                    @endunless
-                @endcan
-            </header>
+        @if (session('status'))
+            <div class="alert alert-success alert-dismissible fade show">
+                {{ session('status') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('Close') }}"></button>
+            </div>
         @endif
+
+        <header class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            @if ($page->title_visible)
+                <h1 class="h2 mb-0">{{ $page->title }}</h1>
+            @endif
+            @can('update', $page)
+                @unless ($page->publish)
+                    <span class="badge text-bg-warning">{{ __('Unpublished') }}</span>
+                @endunless
+                <a href="{{ route('pages.edit', $page) }}" class="btn btn-sm btn-outline-secondary ms-auto">
+                    <i class="fa-solid fa-pen me-1"></i>{{ __('Edit') }}
+                </a>
+            @endcan
+        </header>
 
         <div class="wk-content">
             {{-- Editor HTML; sanitised on save (task 90) --}}
