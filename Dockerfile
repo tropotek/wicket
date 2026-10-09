@@ -73,8 +73,8 @@ ARG APP_VERSION=
 RUN if [ -n "$APP_VERSION" ]; then echo "${APP_VERSION#v}" > /app/version.md; fi
 COPY --from=assets --chown=app:app /app/public/build /app/public/build
 
-# Persistent state lives in /app/data (one volume): db/, media/, private/.
-RUN mkdir -p data/db data/media data/private public/data storage/app/dompdf storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+# Persistent state lives in /app/data (one volume): db/, media/, private/, logs/.
+RUN mkdir -p data/db data/media data/private data/logs public/data storage/app/dompdf storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
  && ln -s /app/data/media public/data/media \
  && ln -s /app/docker/artisan /usr/local/bin/artisan \
  && ln -s /app/storage/app/public public/storage \
@@ -82,7 +82,8 @@ RUN mkdir -p data/db data/media data/private public/data storage/app/dompdf stor
 
 ENV APP_ENV=production \
     APP_DEBUG=false \
-    LOG_CHANNEL=stderr \
+    LOG_CHANNEL=stack \
+    LOG_STACK=stderr,data \
     CACHE_STORE=file \
     DB_CONNECTION=sqlite \
     DB_DATABASE=/app/data/db/wiki.sqlite \

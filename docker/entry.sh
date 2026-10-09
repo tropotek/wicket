@@ -7,7 +7,7 @@ cd /app
 as_app() { su-exec app "$@"; }
 
 DATA=/app/data
-mkdir -p "$DATA/db" "$DATA/media" "$DATA/private"
+mkdir -p "$DATA/db" "$DATA/media" "$DATA/private" "$DATA/logs"
 # Bind mounts arrive owned by the host user; fix once (skip the walk when already right).
 if [ "$(stat -c %U "$DATA")" != app ] || [ "$(stat -c %U "$DATA/private")" != app ]; then
     chown -R app:app "$DATA"

@@ -20,5 +20,14 @@ maintenance mode) are edited under **Admin → Settings** instead.
 | `WICKET_UPLOAD_MAX_KB` | `10240` | largest upload |
 | `WICKET_LOGIN_MAX_ATTEMPTS` / `WICKET_LOGIN_LOCKOUT_MINUTES` | `5` / `15` | login throttling |
 | `WICKET_PAGE_LOCK_SECONDS` | `120` | how long an open editor holds a page |
+| `LOG_LEVEL` | `debug` | least severe message logged (`info`, `warning`, `error`…) |
+| `LOG_DAILY_DAYS` | `14` | days of log files kept in `data/logs/` |
 
 To rotate `APP_KEY`, put the old key in `APP_PREVIOUS_KEYS`, or stored secrets become unreadable.
+
+## Logs
+
+The container logs to stderr, shown by `docker compose -f docker-compose-live.yml logs wicket`,
+and to daily files in `data/logs/`. Docker drops a container's own log when the container is
+replaced (every upgrade); the files in `data/logs/` stay, and go into the `data/` backups.
+

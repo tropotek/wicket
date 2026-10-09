@@ -39,6 +39,7 @@ docker compose -f docker-compose-live.yml exec wicket artisan list wicket
 | `data/media/` | uploads and the media library, served at `/data/media/` |
 | `data/private/.app-key` | the generated app key (unless `APP_KEY` is set) |
 | `data/backups/` | `wicket:backup` snapshots |
+| `data/logs/` | daily log files (`wicket-YYYY-MM-DD.log`), kept 14 days |
 
 The app key encrypts every stored secret. Without it, a restored database still works, but its
 secrets cannot be read. Keep it with your backups.

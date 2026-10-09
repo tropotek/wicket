@@ -4,6 +4,7 @@
 #   docker compose -f docker-compose-live.yml pull && \
 #   docker compose -f docker-compose-live.yml up -d        upgrade to a newer image
 #   docker compose -f docker-compose-live.yml logs wicket  the first admin's generated password is printed here once
+#                                                          (logs also go to data/logs/, which survives upgrades)
 #   docker compose -f docker-compose-live.yml exec wicket artisan <command>   run artisan (always as the app user)
 #
 # Put settings in a .env file next to this one (optional), e.g.:
@@ -40,6 +41,7 @@ services:
       #   data/media/               uploads and the file manager's files
       #   data/private/.app-key     generated APP_KEY (unless APP_KEY is set in .env)
       #   data/backups/             wicket:backup snapshots
+      #   data/logs/                daily logs, kept LOG_DAILY_DAYS days (also in `logs wicket`)
       - ./data:/app/data
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/up"]

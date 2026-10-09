@@ -73,6 +73,15 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // Daily files in data/logs/, kept with the rest of the site's data (the image logs here and to stderr).
+        'data' => [
+            'driver' => 'daily',
+            'path' => base_path('data/logs/wicket.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'max_files' => (int) env('LOG_DAILY_DAYS', 14),
+            'replace_placeholders' => true,
+        ],
+
         'monthly' => [
             'driver' => 'monthly',
             'path' => storage_path('logs/laravel.log'),
