@@ -106,6 +106,18 @@ $font-family-sans-serif:
     background-color: var(--bs-primary-bg-subtle);
 }
 
+// Unchecked radios and checkboxes: Bootstrap's light border all but vanishes on table rows.
+.form-check-input:not(:checked) {
+    border-color: rgba(var(--bs-emphasis-color-rgb), .4);
+}
+
+// Revision history: compare-from / compare-to radios.
+.wk-history .form-check-input[type=radio] {
+    width: 1.15em;
+    height: 1.15em;
+    cursor: pointer;
+}
+
 // Settings → Appearance accent swatches.
 .wk-swatch {
     width: 2rem;

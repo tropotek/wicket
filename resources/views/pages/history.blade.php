@@ -15,7 +15,7 @@
     <form method="GET" action="{{ route('pages.diff', $page) }}"
           x-data="{ from: @js($revisions->skip(1)->first()?->id), to: @js($currentId) }">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle wk-history">
                 <thead>
                     <tr>
                         <th class="text-center" title="{{ __('Compare from') }}">{{ __('From') }}</th>
