@@ -21,7 +21,7 @@ class ContentImagesTest extends TestCase
     public function test_unlinked_images_are_wrapped_for_the_lightbox(): void
     {
         $this->assertSame(
-            '<p><a href="/data/media/a.png" class="wk-lightbox"><img src="/data/media/a.png" alt="A" class="wk-image" loading="lazy"></a></p>',
+            '<p><a href="/data/media/a.png" class="wk-lightbox"><img src="/data/media/a.png" alt="A" class="wk-image img-fluid" loading="lazy"></a></p>',
             $this->render('<p><img src="/data/media/a.png" alt="A"></p>'),
         );
     }
@@ -29,11 +29,11 @@ class ContentImagesTest extends TestCase
     public function test_linked_and_opted_out_images_are_not_wrapped(): void
     {
         $this->assertSame(
-            '<a href="/faq"><img src="/x.png" class="wk-image" loading="lazy"></a>',
+            '<a href="/faq"><img src="/x.png" class="wk-image img-fluid" loading="lazy"></a>',
             $this->render('<a href="/faq"><img src="/x.png"></a>'),
         );
         $this->assertSame(
-            '<img src="/x.png" class="no-lightbox wk-image" loading="eager">',
+            '<img src="/x.png" class="no-lightbox wk-image img-fluid" loading="eager">',
             $this->render('<img src="/x.png" class="no-lightbox" loading="eager">'),
         );
     }
