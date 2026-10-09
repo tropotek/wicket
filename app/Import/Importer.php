@@ -13,6 +13,8 @@ class Importer
     public const PASSES = [
         Passes\UsersPass::class,
         Passes\PagesPass::class,
+        Passes\MenuPass::class,
+        Passes\SecretsPass::class,
         Passes\RevisionsPass::class,
     ];
 
@@ -45,6 +47,15 @@ class Importer
      * @return array<string, array{count: int, imported: ?int}>
      */
     public function run(ImportContext $context, ?callable $progress = null): array
+    {
+        // All or nothing: a pass failing part-way leaves no half import behind.
+        return $context->dryRun ? $this->runPasses($context, $progress) : DB::transaction(fn () => $this->runPasses($context, $progress));
+    }
+
+    /**
+     * @return array<string, array{count: int, imported: ?int}>
+     */
+    private function runPasses(ImportContext $context, ?callable $progress): array
     {
         $report = [];
 

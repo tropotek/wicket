@@ -11,6 +11,9 @@ class ImportContext
     /** @var array<string, string> legacy page url → Wicket slug, for every imported page */
     public array $slugs = [];
 
+    /** @var array<string, array{id: int, name: string}> legacy secret placeholder hash → imported secret */
+    public array $secrets = [];
+
     /** @var list<string> problems worth showing the operator (skipped rows, renamed users…) */
     public array $warnings = [];
 

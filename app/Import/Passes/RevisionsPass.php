@@ -30,7 +30,7 @@ class RevisionsPass implements Pass
 
     public function run(ImportContext $context): int
     {
-        $html = new LegacyHtml(array_filter($context->slugs, fn ($new, $old) => $new !== (string) $old, ARRAY_FILTER_USE_BOTH));
+        $html = new LegacyHtml(array_filter($context->slugs, fn ($new, $old) => $new !== (string) $old, ARRAY_FILTER_USE_BOTH), $context->secrets);
         $orphans = [];
         $imported = 0;
 

@@ -140,7 +140,7 @@ class ImportPassesTest extends TestCase
         $this->legacy->insert('content', ['page_id' => $page, 'user_id' => $sam, 'html' => '<p>Hi</p>']);
 
         $this->artisan('wicket:import', ['--from' => $this->legacy->dsn(), '--dry-run' => true])
-            ->expectsTable(['Pass', 'Found', 'Would import'], [['Users', 1, 1], ['Pages', 1, 1], ['Revisions', 1, 1]])
+            ->expectsTable(['Pass', 'Found', 'Would import'], [['Users', 1, 1], ['Pages', 1, 1], ['Menu', 0, 0], ['Secrets', 0, 0], ['Revisions', 1, 1]])
             ->assertSuccessful();
 
         $this->assertSame(0, User::count() + Page::count());

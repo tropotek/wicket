@@ -5,9 +5,11 @@ namespace App\Console\Commands;
 use App\Import\ImportContext;
 use App\Import\Importer;
 use App\Import\LegacySource;
+use App\Import\Passes\SecretsPass;
 use App\Models\PageLink;
 use Illuminate\Console\Command;
 use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 
 use function Laravel\Prompts\password;
@@ -51,19 +53,30 @@ class Import extends Command
 
         $dryRun = (bool) $this->option('dry-run');
 
-        if (! $dryRun && ! $importer->targetIsEmpty()) {
-            if (! $this->option('force')) {
-                $this->components->error('Wicket already has users or pages. Import into a fresh install, or pass --force to empty them first.');
+        if (! $dryRun && ! $importer->targetIsEmpty() && ! $this->option('force')) {
+            $this->components->error('Wicket already has users or pages. Import into a fresh install, or pass --force to empty them first.');
 
-                return self::FAILURE;
-            }
-            $importer->wipeTarget();
-            $this->components->warn('Emptied existing users, pages, menu, secrets and settings (--force).');
+            return self::FAILURE;
         }
 
         $oldKey = $this->option('old-key');
         if ($oldKey === null && $counts['secret'] > 0 && $this->input->isInteractive() && ! $dryRun) {
             $oldKey = password("tkwiki's system.encrypt key (to decrypt {$counts['secret']} secrets; empty to skip them)") ?: null;
+        }
+
+        if ($oldKey && $counts['secret'] > 0) {
+            try {
+                SecretsPass::checkKey($source->db(), $oldKey);
+            } catch (InvalidArgumentException|RuntimeException $e) {
+                $this->components->error($e->getMessage());
+
+                return self::FAILURE;
+            }
+        }
+
+        if (! $dryRun && ! $importer->targetIsEmpty()) {
+            $importer->wipeTarget();
+            $this->components->warn('Emptied existing users, pages, menu, secrets and settings (--force).');
         }
 
         $context = new ImportContext($source, $oldKey ?: null, $this->option('media-src') ?: null, $dryRun);
