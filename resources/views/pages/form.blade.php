@@ -4,6 +4,10 @@
 
 @section('title', ($editing ? __('Edit :title', ['title' => $page->title]) : __('New page')).' · '.config('app.name'))
 
+@push('editor-scripts')
+    @vite('resources/js/editor.js')
+@endpush
+
 @section('content')
     <form method="POST" novalidate
           action="{{ $editing ? route('pages.update', $page) : route('pages.store') }}"
@@ -58,7 +62,8 @@
 
                 <div class="mb-3">
                     <label for="html" class="form-label">{{ __('Content (HTML)') }}</label>
-                    <textarea id="html" name="html" rows="20" spellcheck="true"
+                    <textarea id="html" name="html" rows="20" spellcheck="true" data-editor
+                              data-content-css="{{ Vite::asset('resources/scss/app.scss') }}"
                               class="form-control font-monospace @error('html') is-invalid @enderror">{{ old('html', $content?->html) }}</textarea>
                     @error('html')
                         <div class="invalid-feedback">{{ $message }}</div>

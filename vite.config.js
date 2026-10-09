@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
     return {
         plugins: [
             laravel({
-                input: ['resources/scss/app.scss', 'resources/js/app.js', 'resources/js/menu-editor.js'],
+                input: ['resources/scss/app.scss', 'resources/js/app.js', 'resources/js/menu-editor.js', 'resources/js/editor.js'],
                 refresh: true,
             }),
         ],

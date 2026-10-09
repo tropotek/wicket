@@ -110,5 +110,6 @@
             <span>v{{ config('app.version') }}</span>
         </div>
     </footer>
+    @stack('editor-scripts')
 </body>
 </html>
