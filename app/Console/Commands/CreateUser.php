@@ -34,7 +34,7 @@ class CreateUser extends Command
         ];
 
         $validator = Validator::make($data, [
-            'username' => ['required', 'string', 'alpha_dash:ascii', 'max:64', Rule::unique(User::class)],
+            'username' => ['required', 'string', 'regex:'.User::USERNAME_PATTERN, 'max:64', Rule::unique(User::class)],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)],
             'role' => ['required', Rule::enum(Role::class)],

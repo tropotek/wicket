@@ -29,7 +29,7 @@ class RegisteredUserController extends Controller
         abort_unless(config('wicket.registration'), 404);
 
         $validated = $request->validate([
-            'username' => ['required', 'string', 'alpha_dash:ascii', 'max:64', 'unique:'.User::class],
+            'username' => ['required', 'string', 'regex:'.User::USERNAME_PATTERN, 'max:64', 'unique:'.User::class],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],

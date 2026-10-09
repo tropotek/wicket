@@ -20,7 +20,7 @@
                             @error('username')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @else
-                                <div class="form-text">{{ __('Letters, numbers, dashes and underscores.') }}</div>
+                                <div class="form-text">{{ __('Letters, numbers, dots, dashes and underscores.') }}</div>
                             @enderror
                         </div>
 

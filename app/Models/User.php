@@ -21,6 +21,9 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    /** Letters, digits, dot, dash, underscore. No "@", so a username never looks like an email. */
+    public const USERNAME_PATTERN = '/^[A-Za-z0-9._-]+$/';
+
     /** Mirrors the column defaults so a freshly created model has them without a refresh. */
     protected $attributes = [
         'role' => 'member',
@@ -52,5 +55,15 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === Role::Admin;
+    }
+
+    /** True when this is an active admin and no other active admin exists. */
+    public function isLastActiveAdmin(): bool
+    {
+        return $this->isAdmin() && $this->active && ! static::query()
+            ->where('role', Role::Admin)
+            ->where('active', true)
+            ->whereKeyNot($this->getKey())
+            ->exists();
     }
 }

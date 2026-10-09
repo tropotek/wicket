@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -21,6 +22,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::view('/', 'admin.index')->name('index');
+    Route::resource('users', UserController::class)->except(['show', 'destroy']);
 });
 
 Route::get('/up', HealthController::class)
