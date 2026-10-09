@@ -40,7 +40,7 @@ class ImportPassesTest extends TestCase
         $id = $this->legacy->insert('user', $user + ['type' => $type, 'given_name' => ucfirst($username)]);
         $this->legacy->insert('auth', $auth + ['fkey' => 'App\Db\User', 'fid' => $id, 'username' => $username,
             'email' => $username.'@example.org', 'password' => password_hash('secret-'.$username, PASSWORD_BCRYPT, ['cost' => 10]),
-            'timezone' => 'Australia/Melbourne']);
+            'timezone' => 'Europe/Berlin']);
 
         return $id;
     }
@@ -52,18 +52,18 @@ class ImportPassesTest extends TestCase
 
     public function test_users_get_roles_and_keep_their_passwords(): void
     {
-        $this->legacyUser('staff', 'godar', ['permissions' => 1, 'last_login' => '2026-10-08 04:44:13'], ['family_name' => 'Smith']);
+        $this->legacyUser('staff', 'alex', ['permissions' => 1, 'last_login' => '2026-10-08 04:44:13'], ['family_name' => 'Smith']);
         $this->legacyUser('staff', 'sam');
         $this->legacyUser('member', 'mo', ['active' => 0, 'timezone' => '']);
 
         $this->import();
 
-        $godar = User::where('username', 'godar')->sole();
-        $this->assertSame(Role::Admin, $godar->role);
-        $this->assertSame('Godar Smith', $godar->name);
-        $this->assertSame('Australia/Melbourne', $godar->timezone);
-        $this->assertSame('2026-10-08 04:44:13', $godar->last_login_at->format('Y-m-d H:i:s'));
-        $this->assertTrue(Hash::check('secret-godar', $godar->password), 'cost-10 bcrypt copied verbatim');
+        $alex = User::where('username', 'alex')->sole();
+        $this->assertSame(Role::Admin, $alex->role);
+        $this->assertSame('Alex Smith', $alex->name);
+        $this->assertSame('Europe/Berlin', $alex->timezone);
+        $this->assertSame('2026-10-08 04:44:13', $alex->last_login_at->format('Y-m-d H:i:s'));
+        $this->assertTrue(Hash::check('secret-alex', $alex->password), 'cost-10 bcrypt copied verbatim');
 
         $this->assertSame(Role::Editor, User::where('username', 'sam')->sole()->role);
         $mo = User::where('username', 'mo')->sole();

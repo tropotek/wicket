@@ -34,12 +34,12 @@ class ProfileTest extends TestCase
         $this->actingAs($user)->patch('/profile', [
             'name' => 'New Name',
             'email' => $user->email,
-            'timezone' => 'Australia/Melbourne',
+            'timezone' => 'Europe/Berlin',
         ])->assertSessionHasNoErrors()->assertRedirect('/profile');
 
         $user->refresh();
         $this->assertSame('New Name', $user->name);
-        $this->assertSame('Australia/Melbourne', $user->timezone);
+        $this->assertSame('Europe/Berlin', $user->timezone);
     }
 
     public function test_blank_timezone_means_default(): void
