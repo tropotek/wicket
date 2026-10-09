@@ -23,24 +23,21 @@ class PagePickerController extends Controller
         Gate::authorize('create', Page::class);
 
         $q = trim((string) $request->query('q'));
-        $terms = preg_split('/\s+/', $q, -1, PREG_SPLIT_NO_EMPTY);
-
-        $pages = Page::visibleTo($request->user())
-            ->where(function (Builder $query) use ($terms) {
-                foreach ($terms as $term) {
-                    $query->where(fn (Builder $w) => $w
-                        ->where('title', 'like', "%{$term}%")
-                        ->orWhere('slug', 'like', "%{$term}%")
-                        ->orWhere('category', 'like', "%{$term}%"));
-                }
-            })
-            ->orderBy('title')
-            ->paginate(10)
-            ->withQueryString();
+        $pages = $this->search($request, $q)->paginate(10)->withQueryString();
 
         $view = $request->header('HX-Target') === 'page-picker' ? 'pages.picker._results' : 'pages.picker.index';
 
         return view($view, ['pages' => $pages, 'q' => $q]);
+    }
+
+    /** `[[` autocomplete in the editor: up to 10 matching pages as {slug, title}. */
+    public function suggest(Request $request): JsonResponse
+    {
+        Gate::authorize('create', Page::class);
+
+        return response()->json(
+            $this->search($request, trim((string) $request->query('q')))->limit(10)->get(['slug', 'title'])
+        );
     }
 
     /** Slug a new page with this title would get: the title slugged, stepped past reserved slugs. */
@@ -56,5 +53,26 @@ class PagePickerController extends Controller
         }
 
         return response()->json(['slug' => $slug]);
+    }
+
+    /**
+     * Pages the user can see where every whitespace-separated term matches title, slug or category.
+     *
+     * @return Builder<Page>
+     */
+    private function search(Request $request, string $q): Builder
+    {
+        $terms = preg_split('/\s+/', $q, -1, PREG_SPLIT_NO_EMPTY);
+
+        return Page::visibleTo($request->user())
+            ->where(function (Builder $query) use ($terms) {
+                foreach ($terms as $term) {
+                    $query->where(fn (Builder $w) => $w
+                        ->where('title', 'like', "%{$term}%")
+                        ->orWhere('slug', 'like', "%{$term}%")
+                        ->orWhere('category', 'like', "%{$term}%"));
+                }
+            })
+            ->orderBy('title');
     }
 }

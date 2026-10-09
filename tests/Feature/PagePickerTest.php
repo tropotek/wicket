@@ -74,6 +74,22 @@ class PagePickerTest extends TestCase
         $this->actingAs($this->editor)->get('/pages/picker?page=2')->assertSee('Page 11')->assertDontSee('Page 10');
     }
 
+    public function test_suggest_returns_matching_visible_pages(): void
+    {
+        $this->page('Server Setup', ['slug' => 'server-setup', 'category' => 'ops']);
+        $this->page('Server Secrets', ['visibility' => Visibility::Private]);
+        foreach (range(1, 12) as $i) {
+            $this->page("Ops note {$i}", ['category' => 'ops']);
+        }
+
+        $this->actingAs($this->editor)->getJson('/pages/picker/suggest?q=server')
+            ->assertOk()
+            ->assertExactJson([['slug' => 'server-setup', 'title' => 'Server Setup']]);
+
+        $this->actingAs($this->editor)->getJson('/pages/picker/suggest?q=ops')->assertJsonCount(10);
+        $this->actingAs(User::factory()->create())->getJson('/pages/picker/suggest?q=ops')->assertForbidden();
+    }
+
     public function test_slug_for_a_new_page(): void
     {
         $this->page('Existing', ['slug' => 'existing']);
@@ -116,6 +132,8 @@ class PagePickerTest extends TestCase
     public function test_page_form_has_the_picker_url(): void
     {
         $this->actingAs($this->editor)->get(route('pages.create'))
-            ->assertSee('data-page-picker-url="'.route('pages.picker').'"', false);
+            ->assertSee('data-page-picker-url="'.route('pages.picker').'"', false)
+            ->assertSee('data-page-suggest-url="'.route('pages.picker.suggest').'"', false)
+            ->assertSee('data-page-slug-url="'.route('pages.picker.slug').'"', false);
     }
 }

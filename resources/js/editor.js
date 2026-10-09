@@ -72,11 +72,66 @@ export function mountEditors() {
                     tooltip: 'Link to a wiki page',
                     onAction: () => pickPage(editor, textarea.dataset.pagePickerUrl),
                 });
+                addPageAutocompleter(editor, textarea.dataset.pageSuggestUrl, textarea.dataset.pageSlugUrl);
                 editor.on('PreInit', () => {
                     editor.getDoc().documentElement.dataset.bsTheme = theme;
                 });
             },
         });
+    });
+}
+
+/** Link HTML for a wiki page. */
+function pageLink(editor, slug, title) {
+    return editor.dom.createHTML('a', { href: '/' + slug, class: 'wk-page' }, editor.dom.encode(title));
+}
+
+/**
+ * `[[` + text suggests pages as you type (TinyMCE positions the menu and handles the keys).
+ * The last row links to a new page with the typed title unless a page already has that title.
+ */
+function addPageAutocompleter(editor, suggestUrl, slugUrl) {
+    const getJson = (url, params) => {
+        const u = new URL(url, window.location.href);
+        Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
+        return fetch(u, { headers: { Accept: 'application/json' } }).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+    };
+
+    editor.ui.registry.addAutocompleter('wikiPageLink', {
+        trigger: '[[',
+        minChars: 1,
+        columns: 1,
+        fetch: (pattern) => {
+            const typed = pattern.trim();
+            return getJson(suggestUrl, { q: typed }).then((pages) => {
+                const items = pages.map((p) => ({ type: 'autocompleteitem', value: 'page:' + p.slug + ':' + p.title, text: p.title, icon: 'link' }));
+                if (typed && ! pages.some((p) => p.title.toLowerCase() === typed.toLowerCase())) {
+                    items.push({ type: 'autocompleteitem', value: 'new:' + typed, text: `Create page: ${typed}`, icon: 'plus' });
+                }
+                return items;
+            }).catch(() => []);
+        },
+        onAction: (api, rng, value) => {
+            api.hide();
+            const insert = (slug, title) => {
+                editor.selection.setRng(rng);
+                editor.insertContent(pageLink(editor, slug, title));
+                // Leave the caret after the link, not inside it.
+                const link = editor.selection.getNode().closest('a.wk-page');
+                if (link) {
+                    editor.selection.select(link);
+                    editor.selection.collapse(false);
+                }
+            };
+
+            if (value.startsWith('page:')) {
+                const [, slug, ...title] = value.split(':');
+                insert(slug, title.join(':'));
+            } else {
+                const title = value.slice(4);
+                getJson(slugUrl, { title }).then(({ slug }) => insert(slug, title));
+            }
+        },
     });
 }
 
@@ -99,7 +154,7 @@ function pickPage(editor, pickerUrl) {
             const href = '/' + data.slug;
 
             if (editor.selection.isCollapsed()) {
-                editor.insertContent(editor.dom.createHTML('a', { href, class: 'wk-page' }, editor.dom.encode(data.title)));
+                editor.insertContent(pageLink(editor, data.slug, data.title));
             } else {
                 editor.execCommand('mceInsertLink', false, { href, class: 'wk-page' });
             }
