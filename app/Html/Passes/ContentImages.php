@@ -8,7 +8,7 @@ use Dom\HTMLDocument;
 
 /**
  * Images get `wk-image` and lazy loading; those not already a link (or marked `no-lightbox`)
- * are wrapped in a link to themselves that the page's lightbox opens.
+ * are wrapped in a link to themselves that the page's lightbox opens (not in PDFs).
  */
 class ContentImages implements HtmlPass
 {
@@ -20,7 +20,7 @@ class ContentImages implements HtmlPass
                 $img->setAttribute('loading', 'lazy');
             }
 
-            if ($img->closest('a') || $img->classList->contains('no-lightbox')) {
+            if ($context->forPdf() || $img->closest('a') || $img->classList->contains('no-lightbox')) {
                 continue;
             }
 

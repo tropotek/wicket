@@ -10,6 +10,7 @@ use App\Http\Requests\PageRequest;
 use App\Models\Page;
 use App\Models\PageRedirect;
 use App\Support\PageLocker;
+use App\Support\PdfExport;
 use App\Support\RenderCache;
 use App\Support\ReservedSlugs;
 use Illuminate\Http\RedirectResponse;
@@ -114,6 +115,22 @@ class PageController extends Controller
         $render = fn () => $pipeline->render($content->html, new RenderContext($page, $request->user()));
 
         return $request->user() ? $render() : $cache->forGuest($content, $render);
+    }
+
+    /** The page as a PDF, for anyone who may read it. */
+    public function pdf(Request $request, Page $page, PdfExport $export): Response|RedirectResponse
+    {
+        if (Gate::denies('view', $page)) {
+            abort_if($request->user() !== null, 403);
+
+            return redirect()->guest(route('login'));
+        }
+
+        return response($export->pdf($page, $request->user()), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$page->slug.'.pdf"',
+            'Cache-Control' => 'no-store, private',
+        ]);
     }
 
     public function create(Request $request): View

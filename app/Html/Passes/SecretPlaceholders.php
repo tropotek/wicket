@@ -32,9 +32,13 @@ class SecretPlaceholders implements HtmlPass
 
         foreach ($placeholders as $el) {
             $secret = $secrets[(int) $el->getAttribute('data-id')] ?? null;
-            $html = $secret && Gate::forUser($context->viewer)->allows('view', $secret)
-                ? Blade::render('<x-secret-card :secret="$secret" />', ['secret' => $secret])
-                : $this->hidden();
+            $allowed = $secret && Gate::forUser($context->viewer)->allows('view', $secret);
+            $html = match (true) {
+                // PDFs can't reveal on demand: name only, never a value.
+                $context->forPdf() => '<span class="wk-secret-pdf">['.e($allowed ? __('Secret: :name', ['name' => $secret->name]) : __('Hidden')).']</span>',
+                $allowed => Blade::render('<x-secret-card :secret="$secret" />', ['secret' => $secret]),
+                default => $this->hidden(),
+            };
 
             $scratch = $doc->createElement('div');
             $scratch->innerHTML = $html;

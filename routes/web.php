@@ -77,6 +77,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/pages/{page:slug}/pdf', [PageController::class, 'pdf'])->name('pages.pdf');
 Route::get('/contact', [ContactController::class, 'create'])->name('contact');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 

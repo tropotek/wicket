@@ -35,15 +35,20 @@
                 @unless ($page->publish)
                     <span class="badge text-bg-warning">{{ __('Unpublished') }}</span>
                 @endunless
-                <div class="btn-group btn-group-sm ms-auto">
+            @endcan
+            <div class="btn-group btn-group-sm ms-auto">
+                <a href="{{ route('pages.pdf', $page) }}" class="btn btn-outline-secondary" target="_blank" title="{{ __('Download as PDF') }}">
+                    <i class="fa-solid fa-file-pdf me-1"></i>PDF
+                </a>
+                @can('update', $page)
                     <a href="{{ route('pages.history', $page) }}" class="btn btn-outline-secondary">
                         <i class="fa-solid fa-clock-rotate-left me-1"></i>{{ __('History') }}
                     </a>
                     <a href="{{ route('pages.edit', $page) }}" class="btn btn-outline-secondary">
                         <i class="fa-solid fa-pen me-1"></i>{{ __('Edit') }}
                     </a>
-                </div>
-            @endcan
+                @endcan
+            </div>
         </header>
 
         @include('pages._content')
