@@ -9,6 +9,7 @@ use App\Http\Requests\PageRequest;
 use App\Models\Page;
 use App\Models\PageRedirect;
 use App\Support\PageLocker;
+use App\Support\RenderCache;
 use App\Support\ReservedSlugs;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ use function Illuminate\Support\defer;
 
 class PageController extends Controller
 {
-    public function show(Request $request, Page $page, Pipeline $pipeline): View|RedirectResponse
+    public function show(Request $request, Page $page, Pipeline $pipeline, RenderCache $cache): View|RedirectResponse
     {
         if (Gate::denies('view', $page)) {
             // Logged-out visitors get a chance to log in; everyone else is refused.
@@ -39,7 +40,7 @@ class PageController extends Controller
         return view('pages.show', [
             'page' => $page,
             'content' => $page->latestContent,
-            'html' => $pipeline->render((string) $page->latestContent?->html, new RenderContext($page, $request->user())),
+            'html' => $this->render($page, $request, $pipeline, $cache),
             'lock' => $request->user() ? app(PageLocker::class)->heldByOther($page, $request->user()) : null,
         ]);
     }
@@ -66,6 +67,20 @@ class PageController extends Controller
             'slug' => $slug,
             'title' => Str::of($slug)->replace(['-', '_'], ' ')->ucfirst()->toString(),
         ], 404);
+    }
+
+    /** Rendered content; cached for guests, whose render doesn't depend on who they are. */
+    private function render(Page $page, Request $request, Pipeline $pipeline, RenderCache $cache): string
+    {
+        $content = $page->latestContent;
+
+        if ($content === null) {
+            return '';
+        }
+
+        $render = fn () => $pipeline->render($content->html, new RenderContext($page, $request->user()));
+
+        return $request->user() ? $render() : $cache->forGuest($content, $render);
     }
 
     public function create(Request $request): View

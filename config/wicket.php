@@ -45,6 +45,12 @@ return [
     ],
 
     /*
+    | Cache rendered page content for guests (App\Support\RenderCache). Signed-in views are
+    | never cached. Busted on any page, revision or redirect write.
+    */
+    'render_cache' => (bool) env('WICKET_RENDER_CACHE', true),
+
+    /*
     | Render passes run over page HTML before display, in this order (App\Html\Pipeline).
     */
     'html_passes' => [

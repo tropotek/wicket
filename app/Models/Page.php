@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Visibility;
+use App\Support\RenderCache;
 use App\Support\SearchIndex;
 use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -55,6 +56,12 @@ class Page extends Model
         // Trashed pages leave search; restored ones come back. (New revisions index via Content.)
         static::deleted(fn (Page $page) => app(SearchIndex::class)->remove($page->id));
         static::restored(fn (Page $page) => app(SearchIndex::class)->sync($page));
+
+        // Guest renders read titles, slugs and existence of linked pages: any change retires them.
+        // (Redirects only change inside a page save; revisions flush from Content.)
+        static::saved(fn () => app(RenderCache::class)->flush());
+        static::deleted(fn () => app(RenderCache::class)->flush());
+        static::restored(fn () => app(RenderCache::class)->flush());
     }
 
     protected function casts(): array

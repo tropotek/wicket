@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Html\Sanitizer;
 use App\Support\LinkIndex;
+use App\Support\RenderCache;
 use App\Support\SearchIndex;
 use Database\Factories\ContentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -38,6 +39,7 @@ class Content extends Model
                 app(LinkIndex::class)->sync($content->page, $content->html);
                 app(SearchIndex::class)->sync($content->page);
             }
+            app(RenderCache::class)->flush();
         });
     }
 
