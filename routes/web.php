@@ -7,6 +7,7 @@ use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PageHistoryController;
+use App\Http\Controllers\PagePickerController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -26,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
     Route::get('/pages/create', [PageController::class, 'create'])->name('pages.create');
+    Route::get('/pages/picker', [PagePickerController::class, 'index'])->name('pages.picker');
+    Route::get('/pages/picker/slug', [PagePickerController::class, 'slug'])->name('pages.picker.slug');
     Route::post('/pages', [PageController::class, 'store'])->name('pages.store');
     Route::get('/pages/{page:slug}/edit', [PageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{page:slug}', [PageController::class, 'update'])->name('pages.update');

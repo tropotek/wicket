@@ -41,24 +41,40 @@ class PageController extends Controller
         ]);
     }
 
-    /** No live page has this slug: 301 an old slug to its page's current one, else 404. */
-    public static function redirectOldSlug(Request $request): RedirectResponse
+    /**
+     * No live page has this slug: 301 an old slug to its page's current one. Otherwise 404, which
+     * offers to create the page to anyone who can (links to pages not written yet land here).
+     */
+    public static function redirectOldSlug(Request $request): Response|RedirectResponse
     {
-        $page = PageRedirect::with('page')->firstWhere('slug', $request->route('page'))?->page;
+        $slug = (string) $request->route('page');
+        $page = PageRedirect::with('page')->firstWhere('slug', $slug)?->page;
 
-        abort_if($page === null, 404);
+        if ($page !== null) {
+            $url = route('pages.show', $page);
+            $query = $request->getQueryString();
 
-        $url = route('pages.show', $page);
-        $query = $request->getQueryString();
+            return redirect($query ? $url.'?'.$query : $url, 301);
+        }
 
-        return redirect($query ? $url.'?'.$query : $url, 301);
+        abort_unless($request->user()?->can('create', Page::class), 404);
+
+        return response()->view('pages.missing', [
+            'slug' => $slug,
+            'title' => Str::of($slug)->replace(['-', '_'], ' ')->ucfirst()->toString(),
+        ], 404);
     }
 
     public function create(Request $request): View
     {
         Gate::authorize('create', Page::class);
 
-        $page = new Page(['visibility' => Visibility::Private]);
+        // Prefilled when following a link to a page that doesn't exist yet.
+        $page = new Page([
+            'visibility' => Visibility::Private,
+            'title' => (string) $request->query('title'),
+            'slug' => (string) $request->query('slug'),
+        ]);
 
         return view('pages.form', $this->formData($request, $page));
     }

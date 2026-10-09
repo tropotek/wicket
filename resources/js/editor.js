@@ -50,7 +50,7 @@ export function mountEditors() {
                 'searchreplace', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'table', 'help',
                 'wordcount', 'save',
             ],
-            toolbar: 'save | bold italic strikethrough | blocks | alignleft aligncenter alignright alignjustify'
+            toolbar: 'save wikiPage | bold italic strikethrough | blocks | alignleft aligncenter alignright alignjustify'
                 + ' | bullist numlist outdent indent | link image media table | removeformat code fullscreen',
             menubar: 'edit view insert format table tools help',
             contextmenu: false,
@@ -67,11 +67,44 @@ export function mountEditors() {
             save_enablewhendirty: false,
             save_onsavecallback: (editor) => editor.formElement?.requestSubmit(),
             setup: (editor) => {
+                editor.ui.registry.addButton('wikiPage', {
+                    icon: 'addtag',
+                    tooltip: 'Link to a wiki page',
+                    onAction: () => pickPage(editor, textarea.dataset.pagePickerUrl),
+                });
                 editor.on('PreInit', () => {
                     editor.getDoc().documentElement.dataset.bsTheme = theme;
                 });
             },
         });
+    });
+}
+
+/**
+ * Open the page picker. It posts { mceAction: 'wicketPagePick', slug, title }; the link wraps the
+ * selection, or is inserted with the page title as its text.
+ */
+function pickPage(editor, pickerUrl) {
+    const url = new URL(pickerUrl, window.location.href);
+    const selected = editor.selection.getContent({ format: 'text' }).trim();
+    if (selected) url.searchParams.set('q', selected);
+
+    editor.windowManager.openUrl({
+        title: 'Link to a page',
+        url: url.toString(),
+        width: Math.min(900, window.innerWidth - 40),
+        height: Math.min(640, window.innerHeight - 120),
+        onMessage: (api, data) => {
+            if (data.mceAction !== 'wicketPagePick') return;
+            const href = '/' + data.slug;
+
+            if (editor.selection.isCollapsed()) {
+                editor.insertContent(editor.dom.createHTML('a', { href, class: 'wk-page' }, editor.dom.encode(data.title)));
+            } else {
+                editor.execCommand('mceInsertLink', false, { href, class: 'wk-page' });
+            }
+            api.close();
+        },
     });
 }
 

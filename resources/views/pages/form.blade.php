@@ -14,7 +14,7 @@
           x-data="{
               title: @js(old('title', $page->title)),
               slug: @js(old('slug', $page->slug)),
-              slugTouched: @js($editing || filled(old('slug'))),
+              slugTouched: @js($editing || filled(old('slug', $page->slug))),
               slugify(s) {
                   return s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase()
                       .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -66,6 +66,7 @@
                               data-content-css="{{ Vite::asset('resources/scss/app.scss') }}"
                               data-upload-url="{{ route('media.upload') }}"
                               data-media-url="{{ route('media.index') }}"
+                              data-page-picker-url="{{ route('pages.picker') }}"
                               class="form-control font-monospace @error('html') is-invalid @enderror">{{ old('html', $content?->html) }}</textarea>
                     @error('html')
                         <div class="invalid-feedback">{{ $message }}</div>
