@@ -59,6 +59,8 @@ export function mountEditors() {
             image_uploadtab: true,
             automatic_uploads: true,
             images_upload_handler: (blobInfo, progress) => uploadImage(textarea.dataset.uploadUrl, blobInfo, progress),
+            file_picker_types: 'file image',
+            file_picker_callback: (callback, value, meta) => pickMedia(textarea.dataset.mediaUrl, callback, meta),
             extended_valid_elements: 'i[*],em[*],b[*],a[*],div[*],span[*],img[*]',
             relative_urls: false,
             remove_script_host: true,
@@ -70,6 +72,28 @@ export function mountEditors() {
                 });
             },
         });
+    });
+}
+
+/**
+ * Open the media browser in picker mode in a TinyMCE dialog. Its Select buttons post
+ * { mceAction: 'wicketMediaPick', url, name }, which fills the dialog field that asked.
+ */
+function pickMedia(mediaUrl, callback, meta) {
+    const isImage = meta.filetype === 'image';
+    const url = new URL(mediaUrl, window.location.href);
+    url.searchParams.set('picker', isImage ? 'image' : 'file');
+
+    tinymce.activeEditor.windowManager.openUrl({
+        title: isImage ? 'Choose an image' : 'Choose a file',
+        url: url.toString(),
+        width: Math.min(1100, window.innerWidth - 40),
+        height: Math.min(700, window.innerHeight - 120),
+        onMessage: (api, data) => {
+            if (data.mceAction !== 'wicketMediaPick') return;
+            callback(data.url, isImage ? { alt: '' } : { text: data.name, title: data.name });
+            api.close();
+        },
     });
 }
 

@@ -65,6 +65,7 @@
                     <textarea id="html" name="html" rows="20" spellcheck="true" data-editor
                               data-content-css="{{ Vite::asset('resources/scss/app.scss') }}"
                               data-upload-url="{{ route('media.upload') }}"
+                              data-media-url="{{ route('media.index') }}"
                               class="form-control font-monospace @error('html') is-invalid @enderror">{{ old('html', $content?->html) }}</textarea>
                     @error('html')
                         <div class="invalid-feedback">{{ $message }}</div>

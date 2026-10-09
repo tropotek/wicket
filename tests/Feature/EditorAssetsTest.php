@@ -21,7 +21,8 @@ class EditorAssetsTest extends TestCase
                 ->assertOk()
                 ->assertSee('resources/js/editor.js', false)
                 ->assertSee('data-editor', false)
-                ->assertSee('data-content-css="', false);
+                ->assertSee('data-content-css="', false)
+                ->assertSee('data-media-url="'.route('media.index').'"', false);
         }
     }
 
