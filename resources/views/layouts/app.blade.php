@@ -48,6 +48,14 @@
                             <i class="fa-solid fa-user me-1"></i>{{ auth()->user()->name }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            @can('admin')
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.index') }}">
+                                        <i class="fa-solid fa-screwdriver-wrench me-1"></i>{{ __('Admin') }}
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            @endcan
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf

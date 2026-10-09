@@ -42,4 +42,15 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
         ];
     }
+
+    /** True when the user's role is $role or higher. */
+    public function hasRole(Role $role): bool
+    {
+        return $this->role->atLeast($role);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === Role::Admin;
+    }
 }
