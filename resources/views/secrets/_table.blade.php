@@ -19,11 +19,7 @@
                     @foreach ($secrets as $secret)
                         <tr>
                             <td>
-                                @can('update', $secret)
-                                    <a href="{{ route('secrets.edit', $secret) }}" hx-boost="false">{{ $secret->name }}</a>
-                                @else
-                                    {{ $secret->name }}
-                                @endcan
+                                <a href="{{ route('secrets.show', $secret) }}" hx-boost="false">{{ $secret->name }}</a>
                                 @if ($secret->otp)
                                     <span class="badge text-bg-info ms-1" title="{{ __('Has a 2FA key') }}">2FA</span>
                                 @endif
@@ -35,9 +31,13 @@
                             <td><span class="badge text-bg-secondary">{{ $secret->visibility->label() }}</span></td>
                             <td class="d-none d-lg-table-cell">{{ $secret->author?->name ?? '—' }}</td>
                             <td class="d-none d-lg-table-cell text-body-secondary">{{ $secret->updated_at?->diffForHumans() }}</td>
-                            <td class="text-end">
+                            <td class="text-end text-nowrap">
+                                @can('update', $secret)
+                                    <a href="{{ route('secrets.edit', $secret) }}" hx-boost="false" class="btn btn-sm btn-outline-secondary"
+                                       aria-label="{{ __('Edit :name', ['name' => $secret->name]) }}"><i class="fa-solid fa-pen"></i></a>
+                                @endcan
                                 @can('delete', $secret)
-                                    <form method="POST" action="{{ route('secrets.destroy', $secret) }}" hx-boost="false"
+                                    <form method="POST" action="{{ route('secrets.destroy', $secret) }}" hx-boost="false" class="d-inline"
                                           onsubmit="return confirm(@js(__('Delete secret ":name"? Pages showing it will lose it.', ['name' => $secret->name])))">
                                         @csrf
                                         @method('DELETE')

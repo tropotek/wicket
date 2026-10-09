@@ -46,7 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/media/thumb', [MediaController::class, 'thumb'])->name('media.thumb');
 
     Route::get('/secrets/picker', [SecretController::class, 'picker'])->name('secrets.picker');
-    Route::resource('secrets', SecretController::class)->except('show');
+    Route::post('/secrets/{secret}/reveal', [SecretController::class, 'reveal'])->middleware('throttle:60,1')->name('secrets.reveal');
+    Route::resource('secrets', SecretController::class);
 
     Route::get('/pages/{page:slug}/history', [PageHistoryController::class, 'index'])->name('pages.history');
     Route::get('/pages/{page:slug}/diff', [PageHistoryController::class, 'diff'])->name('pages.diff');

@@ -1,6 +1,7 @@
 import 'bootstrap';
 import Alpine from 'alpinejs';
 import htmx from 'htmx.org';
+import secretCard from './components/secret-card.js';
 
 window.Alpine = Alpine;
 window.htmx = htmx;
@@ -13,5 +14,7 @@ htmx.config.responseHandling = [
     { code: '[45]..', swap: false, error: true },
     { code: '...', swap: false },
 ];
+
+Alpine.data('secretCard', secretCard);
 
 Alpine.start();

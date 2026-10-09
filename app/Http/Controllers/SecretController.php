@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SecretRequest;
 use App\Models\Secret;
+use App\Support\Totp;
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -72,6 +74,30 @@ class SecretController extends Controller implements HasMiddleware
         $view = $request->header('HX-Target') === 'secret-picker' ? 'secrets.picker._results' : 'secrets.picker.index';
 
         return view($view, ['secrets' => $secrets, 'q' => $q, 'picked' => $picked]);
+    }
+
+    /** One secret as a card, for anyone who may view it. */
+    public function show(Secret $secret): View
+    {
+        Gate::authorize('view', $secret);
+
+        return view('secrets.show', ['secret' => $secret]);
+    }
+
+    /**
+     * The protected values, fetched by the card on demand. POST so they never land in URLs,
+     * history or caches.
+     */
+    public function reveal(Secret $secret, Totp $totp): JsonResponse
+    {
+        Gate::authorize('view', $secret);
+
+        return response()->json([
+            'password' => $secret->password,
+            'keys' => $secret->keys,
+            'notes' => $secret->notes,
+            'otp' => $secret->otp ? $totp->current($secret->otp) : null,
+        ])->header('Cache-Control', 'no-store, private');
     }
 
     /** `picker=1`: inside the editor dialog (bare layout; saving inserts the new secret). */
