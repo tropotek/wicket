@@ -22,4 +22,4 @@ bin/release v1.2.3
 
 It runs Pint and the test suite (and the importer tests when the importer changed since the last
 tag), tags the commit, and offers to push the tag. A pushed `v*` tag makes GitHub Actions build
-the image for amd64 and arm64 and publish `ghcr.io/tropotek/wicket:1.2.3` and `:latest`.
+the image for amd64 and publish `ghcr.io/tropotek/wicket:1.2.3` and `:latest`.

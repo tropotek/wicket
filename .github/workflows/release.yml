@@ -1,7 +1,8 @@
-# Release: on a v* tag, build the prod image natively for amd64 and arm64, publish to GHCR.
+# Release: on a v* tag, build the prod image for amd64 and publish it to GHCR.
+# Another platform is one more matrix entry (e.g. linux/arm64 on the free ubuntu-24.04-arm runner).
 #
 # Zero-cost by design (public repo):
-#   - standard GitHub-hosted runners only (ubuntu-24.04, ubuntu-24.04-arm) — free for public repos.
+#   - standard GitHub-hosted runners only — free for public repos.
 #     Never switch to "larger" runners: those are billed even for public repositories.
 #   - runs only on v* tags and manual dispatch; no push / pull_request triggers.
 #   - timeouts on every job, one run per ref (newer cancels older).
@@ -41,8 +42,6 @@ jobs:
         include:
           - platform: linux/amd64
             runner: ubuntu-24.04
-          - platform: linux/arm64
-            runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
