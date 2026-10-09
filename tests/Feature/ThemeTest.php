@@ -56,4 +56,12 @@ class ThemeTest extends TestCase
         $this->assertStringContainsString('<style id="wk-theme">', $html);
         $this->assertLessThan(strpos($html, 'body{}'), strpos($html, 'wk-theme'));
     }
+
+    public function test_default_mode_feeds_the_head_script(): void
+    {
+        $this->get('/login')->assertSee("const fallback = 'system'", false);
+
+        Settings::set(['theme.mode' => 'dark']);
+        $this->get('/login')->assertSee("const fallback = 'dark'", false);
+    }
 }

@@ -102,6 +102,16 @@
                         @error('theme__accent') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
                     <div class="row g-3">
+                        <div class="col-12">
+                            <label for="theme__mode" class="form-label">{{ __('Default mode') }}</label>
+                            <select id="theme__mode" name="theme__mode" class="form-select @error('theme__mode') is-invalid @enderror">
+                                @foreach (['system' => __('Follow the visitor\'s system'), 'light' => __('Light'), 'dark' => __('Dark')] as $value => $label)
+                                    <option value="{{ $value }}" @selected($v('theme.mode') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            <div class="form-text">{{ __('Until a visitor picks their own with the moon/sun button.') }}</div>
+                            @error('theme__mode') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
                         <div class="col-sm-6">
                             <label for="theme__radius" class="form-label">{{ __('Corners') }}</label>
                             <select id="theme__radius" name="theme__radius" class="form-select @error('theme__radius') is-invalid @enderror">

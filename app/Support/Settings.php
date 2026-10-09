@@ -48,6 +48,7 @@ class Settings
             'theme.accent' => ['type' => 'color', 'rules' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/']],
             'theme.radius' => ['type' => 'string', 'rules' => ['required', Rule::in(Theme::RADII)]],
             'theme.font' => ['type' => 'string', 'rules' => ['required', Rule::in(Theme::FONTS)]],
+            'theme.mode' => ['type' => 'string', 'rules' => ['required', Rule::in(Theme::MODES)]],
         ];
     }
 
@@ -71,6 +72,7 @@ class Settings
             'theme.accent' => Theme::DEFAULT_ACCENT,
             'theme.radius' => 'default',
             'theme.font' => 'system',
+            'theme.mode' => 'system',
         ];
     }
 

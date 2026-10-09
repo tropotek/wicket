@@ -6,9 +6,11 @@
 
 <script>
     (() => {
+        // The visitor's own toggle wins, then Settings → Appearance, then their OS.
         const stored = localStorage.getItem('wicket.theme');
+        const fallback = @js(App\Facades\Settings::get('theme.mode'));
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = stored ?? (prefersDark ? 'dark' : 'light');
+        const theme = stored ?? (fallback === 'system' ? (prefersDark ? 'dark' : 'light') : fallback);
         document.documentElement.dataset.bsTheme = theme;
     })();
 </script>

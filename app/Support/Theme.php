@@ -27,6 +27,9 @@ class Theme
 
     public const FONTS = ['system', 'serif', 'mono'];
 
+    /** Light/dark mode for visitors who haven't used the toggle; system follows their OS. */
+    public const MODES = ['system', 'light', 'dark'];
+
     private const RADIUS_VARS = [
         'sharp' => ['' => '0', 'sm' => '0', 'lg' => '0', 'xl' => '0', 'xxl' => '0'],
         'round' => ['' => '.5rem', 'sm' => '.375rem', 'lg' => '.75rem', 'xl' => '1rem', 'xxl' => '1.5rem'],

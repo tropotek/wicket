@@ -42,6 +42,7 @@ class SettingsTest extends TestCase
             'theme__accent' => '#0d6efd',
             'theme__radius' => 'default',
             'theme__font' => 'system',
+            'theme__mode' => 'system',
         ];
     }
 
@@ -117,7 +118,7 @@ class SettingsTest extends TestCase
     {
         $this->actingAs($this->admin);
 
-        foreach (['theme__accent' => 'red', 'theme__radius' => 'huge', 'theme__font' => 'comic'] as $field => $bad) {
+        foreach (['theme__accent' => 'red', 'theme__radius' => 'huge', 'theme__font' => 'comic', 'theme__mode' => 'dim'] as $field => $bad) {
             $this->put(route('admin.settings.update'), $this->form([$field => $bad]))->assertSessionHasErrors($field);
         }
 
