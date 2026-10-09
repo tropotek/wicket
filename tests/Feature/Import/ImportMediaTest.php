@@ -7,9 +7,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\PendingCommand;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Support\LegacyFixture;
 use Tests\TestCase;
 
+#[Group('import')]
 class ImportMediaTest extends TestCase
 {
     use RefreshDatabase;

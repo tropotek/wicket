@@ -5,9 +5,11 @@ namespace Tests\Feature\Import;
 use App\Import\LegacySource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Support\LegacyFixture;
 use Tests\TestCase;
 
+#[Group('import')]
 class ImportCommandTest extends TestCase
 {
     use RefreshDatabase;

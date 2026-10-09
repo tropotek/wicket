@@ -3,8 +3,10 @@
 namespace Tests\Unit;
 
 use App\Import\LegacyHtml;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+#[Group('import')]
 class LegacyHtmlTest extends TestCase
 {
     public function test_page_links_become_root_relative_wiki_links(): void

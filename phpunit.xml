@@ -12,6 +12,12 @@
             <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
+    <groups>
+        <exclude>
+            <!-- tkwiki importer tests: run on demand with the import group (see tests/Support/LegacyFixture.php) -->
+            <group>import</group>
+        </exclude>
+    </groups>
     <source>
         <include>
             <directory>app</directory>

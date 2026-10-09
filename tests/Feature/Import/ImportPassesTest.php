@@ -10,9 +10,11 @@ use App\Models\PageLink;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Support\LegacyFixture;
 use Tests\TestCase;
 
+#[Group('import')]
 class ImportPassesTest extends TestCase
 {
     use RefreshDatabase;

@@ -12,9 +12,11 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\PendingCommand;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Support\LegacyFixture;
 use Tests\TestCase;
 
+#[Group('import')]
 class ImportMenuSecretsTest extends TestCase
 {
     use RefreshDatabase;

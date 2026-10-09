@@ -10,10 +10,12 @@ use App\Models\Secret;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Support\LegacyFixture;
 use Tests\TestCase;
 
 /** The tkwiki → Wicket permission mapping (table in _notes/laravel-rewrite/C3-import-permissions.md). */
+#[Group('import')]
 class ImportPermissionsTest extends TestCase
 {
     use RefreshDatabase;

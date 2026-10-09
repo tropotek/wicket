@@ -4,9 +4,11 @@ namespace Tests\Unit;
 
 use App\Import\LegacyEncrypt;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
+#[Group('import')]
 class LegacyEncryptTest extends TestCase
 {
     private const KEY = 'a3f1c2d4e5b60718293a4b5c6d7e8f90112233445566778899aabbccddeeff00';

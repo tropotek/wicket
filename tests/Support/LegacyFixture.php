@@ -7,6 +7,9 @@ use PDO;
 /**
  * A small tkwiki database in an SQLite file, shaped like the real (MariaDB) schema the importer
  * reads. Tests import from it with --from=sqlite:///path.
+ *
+ * Importer tests are in the `import` group, which the default run skips:
+ * `php artisan test --group=import`.
  */
 class LegacyFixture
 {
