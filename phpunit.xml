@@ -35,6 +35,7 @@
         <server name="APP_ENV" value="testing" force="true"/>
         <server name="BCRYPT_ROUNDS" value="4" force="true"/>
         <server name="MAIL_MAILER" value="array" force="true"/>
+        <server name="WICKET_REGISTRATION" value="false" force="true"/>
         <server name="CACHE_STORE" value="array" force="true"/>
         <server name="DB_CONNECTION" value="sqlite" force="true"/>
         <server name="DB_DATABASE" value=":memory:" force="true"/>

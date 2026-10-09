@@ -54,6 +54,12 @@
                         </div>
                     </form>
                 </div>
+
+                @if (config('wicket.registration'))
+                    <div class="card-footer text-center small py-3">
+                        {{ __('No account?') }} <a href="{{ route('register') }}">{{ __('Register') }}</a>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
