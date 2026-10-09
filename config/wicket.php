@@ -65,6 +65,16 @@ return [
     */
     'embed_hosts' => ['www.youtube.com', 'www.youtube-nocookie.com', 'youtube.com', 'player.vimeo.com'],
 
+    /*
+    | First admin, created by the container entrypoint (wicket:first-admin) when no admin exists.
+    | Leave the password empty to have one generated and printed once in the log.
+    */
+    'first_admin' => [
+        'username' => env('WICKET_ADMIN_USERNAME', 'admin'),
+        'email' => env('WICKET_ADMIN_EMAIL'),
+        'password' => env('WICKET_ADMIN_PASSWORD'),
+    ],
+
     'login' => [
         'max_attempts' => (int) env('WICKET_LOGIN_MAX_ATTEMPTS', 5),
         'lockout_minutes' => (int) env('WICKET_LOGIN_LOCKOUT_MINUTES', 15),

@@ -64,7 +64,8 @@ RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY docker/php.ini "$PHP_INI_DIR/conf.d/zz-wicket.ini"
 COPY docker/opcache.ini "$PHP_INI_DIR/conf.d/zz-opcache.ini"
 
-RUN addgroup -g 1000 app && adduser -D -u 1000 -G app app
+RUN apk add --no-cache su-exec \
+ && addgroup -g 1000 app && adduser -D -u 1000 -G app app
 
 COPY --from=vendor --chown=app:app /app /app
 COPY --from=assets --chown=app:app /app/public/build /app/public/build
@@ -84,9 +85,10 @@ ENV APP_ENV=production \
     OCTANE_SERVER=frankenphp \
     APP_PORT=8080
 
-USER app
+# Starts as root only to fix /app/data ownership; entry.sh drops to `app` for everything else.
 EXPOSE 8080
 VOLUME ["/app/data"]
+ENTRYPOINT ["/app/docker/entry.sh"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD curl -fsS "http://127.0.0.1:${APP_PORT}/up" || exit 1
