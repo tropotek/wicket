@@ -10,6 +10,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PageHistoryController;
 use App\Http\Controllers\PagePickerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SecretController;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -70,6 +71,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('menu/{item}', [MenuController::class, 'update'])->name('menu.update');
     Route::delete('menu/{item}', [MenuController::class, 'destroy'])->name('menu.destroy');
 });
+
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 Route::get('/up', HealthController::class)
     ->name('health')

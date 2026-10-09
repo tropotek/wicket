@@ -33,6 +33,15 @@
                          localStorage.setItem('wicket.theme', this.theme);
                      },
                  }">
+                @unless (request()->routeIs('search'))
+                    <form method="GET" action="{{ route('search') }}" role="search" class="d-none d-md-block">
+                        <input type="search" name="q" class="form-control form-control-sm" style="width: 12rem"
+                               placeholder="{{ __('Search') }}" aria-label="{{ __('Search pages') }}">
+                    </form>
+                    <a href="{{ route('search') }}" class="btn btn-sm btn-outline-secondary d-md-none" aria-label="{{ __('Search') }}">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </a>
+                @endunless
                 <button class="btn btn-sm btn-outline-secondary"
                         type="button"
                         @click="toggle()"
