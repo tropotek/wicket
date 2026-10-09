@@ -11,7 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $versionFile = base_path('version.md');
+        $version = is_file($versionFile) ? trim(file_get_contents($versionFile)) : 'dev';
+
+        config(['app.version' => $version]);
     }
 
     /**

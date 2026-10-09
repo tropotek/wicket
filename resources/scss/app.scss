@@ -1,0 +1,25 @@
+// Wicket SCSS entrypoint.
+// Override Bootstrap Sass variables above the import, add Wicket styles below.
+
+$font-family-sans-serif:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    "Noto Sans",
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji";
+
+@import "bootstrap/scss/bootstrap";
+
+[x-cloak] { display: none !important; }
+
+.wicket-footer {
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
