@@ -43,6 +43,14 @@ class ExternalLinksTest extends TestCase
         }
     }
 
+    public function test_image_links_open_in_a_new_tab_without_the_icon(): void
+    {
+        $this->assertSame(
+            '<a href="https://example.org/x" target="_blank" rel="noopener noreferrer"><img src="/data/media/x.png"></a>',
+            $this->render('<a href="https://example.org/x"><img src="/data/media/x.png"></a>'),
+        );
+    }
+
     public function test_existing_classes_are_kept(): void
     {
         $this->assertStringContainsString('class="btn wk-link-external"', $this->render('<a class="btn" href="https://example.org">x</a>'));

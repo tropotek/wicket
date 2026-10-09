@@ -7,7 +7,7 @@ use App\Html\RenderContext;
 use App\Support\SiteHosts;
 use Dom\HTMLDocument;
 
-/** Links to other sites open in a new tab and are marked wk-link-external. */
+/** Links to other sites open in a new tab; text links are also marked wk-link-external (the icon). */
 class ExternalLinks implements HtmlPass
 {
     public function __construct(private SiteHosts $hosts) {}
@@ -21,7 +21,9 @@ class ExternalLinks implements HtmlPass
                 continue;
             }
 
-            $a->classList->add('wk-link-external');
+            if ($a->querySelector('img') === null) {
+                $a->classList->add('wk-link-external');
+            }
             $a->setAttribute('target', '_blank');
             $a->setAttribute('rel', 'noopener noreferrer');
         }
