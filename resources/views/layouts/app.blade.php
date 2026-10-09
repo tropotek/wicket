@@ -25,7 +25,7 @@
             <a class="navbar-brand fw-semibold" href="{{ url('/') }}">
                 {{ config('app.name') }}
             </a>
-            <div class="ms-auto"
+            <div class="ms-auto d-flex align-items-center gap-2"
                  x-data="{
                      theme: document.documentElement.dataset.bsTheme,
                      toggle() {
@@ -40,6 +40,29 @@
                         :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
                     <i class="fa-solid" :class="theme === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
                 </button>
+
+                @auth
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-user me-1"></i>{{ auth()->user()->name }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fa-solid fa-right-from-bracket me-1"></i>{{ __('Log out') }}
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @else
+                    @unless (request()->routeIs('login'))
+                        <a class="btn btn-sm btn-primary" href="{{ route('login') }}">{{ __('Log in') }}</a>
+                    @endunless
+                @endauth
             </div>
         </div>
     </nav>
