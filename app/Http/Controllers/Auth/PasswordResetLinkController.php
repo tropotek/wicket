@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Throwable;
 
 class PasswordResetLinkController extends Controller
 {
@@ -28,7 +29,13 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        Password::sendResetLink($request->only('email'));
+        // A send failure only happens for real accounts, so surfacing it would
+        // reveal which emails exist. Log it and reply as normal.
+        try {
+            Password::sendResetLink($request->only('email'));
+        } catch (Throwable $e) {
+            report($e);
+        }
 
         return back()->with('status', __('If that email belongs to an account, a reset link is on its way.'));
     }

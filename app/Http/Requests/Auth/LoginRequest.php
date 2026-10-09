@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,6 +29,8 @@ class LoginRequest extends FormRequest
         ];
     }
 
+    private ?string $throttleKey = null;
+
     /**
      * Attempt to authenticate by username or email. Inactive users fail with
      * the same generic message as a bad password.
@@ -38,8 +41,7 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $login = $this->string('login')->trim()->value();
-        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        [$field, $login] = $this->identifier();
 
         $credentials = [
             $field => $login,
@@ -48,7 +50,7 @@ class LoginRequest extends FormRequest
         ];
 
         if (! Auth::attempt($credentials, $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+            RateLimiter::hit($this->throttleKey(), config('wicket.login.lockout_minutes') * 60);
 
             throw ValidationException::withMessages([
                 'login' => trans('auth.failed'),
@@ -63,7 +65,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), config('wicket.login.max_attempts'))) {
             return;
         }
 
@@ -79,8 +81,32 @@ class LoginRequest extends FormRequest
         ]);
     }
 
+    /**
+     * Keyed on the account when the identifier resolves to one, so switching
+     * between username and email doesn't buy a fresh budget.
+     */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('login')->trim()).'|'.$this->ip());
+        if ($this->throttleKey === null) {
+            [$field, $login] = $this->identifier();
+            $id = User::where($field, $login)->value('id');
+
+            $subject = $id ? "user:{$id}" : Str::transliterate(Str::lower($login));
+            $this->throttleKey = "login:{$subject}|{$this->ip()}";
+        }
+
+        return $this->throttleKey;
+    }
+
+    /**
+     * @return array{0: 'email'|'username', 1: string}
+     */
+    private function identifier(): array
+    {
+        $login = $this->string('login')->trim()->value();
+
+        return filter_var($login, FILTER_VALIDATE_EMAIL)
+            ? ['email', Str::lower($login)]
+            : ['username', $login];
     }
 }

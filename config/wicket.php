@@ -8,4 +8,13 @@ return [
     */
     'registration' => (bool) env('WICKET_REGISTRATION', false),
 
+    /*
+    | Failed logins allowed per account (or unknown identifier) + IP before
+    | lockout, and how long the lockout lasts.
+    */
+    'login' => [
+        'max_attempts' => (int) env('WICKET_LOGIN_MAX_ATTEMPTS', 5),
+        'lockout_minutes' => (int) env('WICKET_LOGIN_LOCKOUT_MINUTES', 15),
+    ],
+
 ];
