@@ -5,4 +5,13 @@ import htmx from 'htmx.org';
 window.Alpine = Alpine;
 window.htmx = htmx;
 
+// Swap 422 responses too: they carry the form re-rendered with its validation errors.
+htmx.config.responseHandling = [
+    { code: '204', swap: false },
+    { code: '[23]..', swap: true },
+    { code: '422', swap: true },
+    { code: '[45]..', swap: false, error: true },
+    { code: '...', swap: false },
+];
+
 Alpine.start();

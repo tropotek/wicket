@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HealthController;
@@ -43,6 +44,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', UserController::class)->except(['show', 'destroy']);
     Route::get('pages', [AdminPageController::class, 'index'])->name('pages.index');
     Route::post('pages/bulk', [AdminPageController::class, 'bulk'])->name('pages.bulk');
+    Route::get('menu', [MenuController::class, 'index'])->name('menu.index');
+    Route::post('menu', [MenuController::class, 'store'])->name('menu.store');
+    Route::put('menu/order', [MenuController::class, 'order'])->name('menu.order');
+    Route::patch('menu/{item}', [MenuController::class, 'update'])->name('menu.update');
+    Route::delete('menu/{item}', [MenuController::class, 'destroy'])->name('menu.destroy');
 });
 
 Route::get('/up', HealthController::class)
