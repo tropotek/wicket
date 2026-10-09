@@ -18,6 +18,11 @@ return [
     */
     'page_lock_seconds' => (int) env('WICKET_PAGE_LOCK_SECONDS', 120),
 
+    /*
+    | Largest image upload accepted, in KB. php.ini's upload_max_filesize must allow it.
+    */
+    'upload_max_kb' => (int) env('WICKET_UPLOAD_MAX_KB', 10240),
+
     'login' => [
         'max_attempts' => (int) env('WICKET_LOGIN_MAX_ATTEMPTS', 5),
         'lockout_minutes' => (int) env('WICKET_LOGIN_LOCKOUT_MINUTES', 15),

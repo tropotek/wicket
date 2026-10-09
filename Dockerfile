@@ -1,6 +1,6 @@
 FROM dunglas/frankenphp:1.13-php8.4-bookworm
 
-RUN install-php-extensions pdo_sqlite intl zip pcntl
+RUN install-php-extensions pdo_sqlite intl zip pcntl gd
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

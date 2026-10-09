@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PageHistoryController;
 use App\Http\Controllers\ProfileController;
@@ -30,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/pages/{page:slug}', [PageController::class, 'update'])->name('pages.update');
     Route::post('/pages/{page:slug}/lock', [PageController::class, 'heartbeat'])->name('pages.lock');
     Route::post('/pages/{page:slug}/unlock', [PageController::class, 'unlock'])->name('pages.unlock');
+
+    Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
 
     Route::get('/pages/{page:slug}/history', [PageHistoryController::class, 'index'])->name('pages.history');
     Route::get('/pages/{page:slug}/diff', [PageHistoryController::class, 'diff'])->name('pages.diff');

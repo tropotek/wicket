@@ -47,6 +47,15 @@ return [
             'report' => false,
         ],
 
+        // Wiki media (uploads, file manager). Served as static files via the public/data/media link.
+        'media' => [
+            'driver' => 'local',
+            'root' => base_path('data/media'),
+            'url' => '/data/media',
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -75,6 +84,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('data/media') => base_path('data/media'),
     ],
 
 ];

@@ -56,6 +56,9 @@ export function mountEditors() {
             contextmenu: false,
             statusbar: false,
             image_advtab: true,
+            image_uploadtab: true,
+            automatic_uploads: true,
+            images_upload_handler: (blobInfo, progress) => uploadImage(textarea.dataset.uploadUrl, blobInfo, progress),
             extended_valid_elements: 'i[*],em[*],b[*],a[*],div[*],span[*],img[*]',
             relative_urls: false,
             remove_script_host: true,
@@ -67,6 +70,36 @@ export function mountEditors() {
                 });
             },
         });
+    });
+}
+
+/** POST a pasted, dropped or chosen image to the media endpoint; resolves with its URL. */
+function uploadImage(url, blobInfo, progress) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name=csrf-token]').content);
+        xhr.upload.onprogress = (e) => progress((e.loaded / e.total) * 100);
+        xhr.onerror = () => reject({ message: 'Upload failed: network error.', remove: true });
+        xhr.onload = () => {
+            let json = {};
+            try {
+                json = JSON.parse(xhr.responseText);
+            } catch {
+                // fall through to the status message
+            }
+            if (xhr.status === 200 && json.location) {
+                resolve(json.location);
+            } else {
+                const message = json.errors?.file?.[0] ?? json.message ?? `HTTP ${xhr.status}`;
+                reject({ message: `Upload failed: ${message}`, remove: true });
+            }
+        };
+
+        const data = new FormData();
+        data.append('file', blobInfo.blob(), blobInfo.filename());
+        xhr.send(data);
     });
 }
 
