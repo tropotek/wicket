@@ -9,6 +9,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PageHistoryController;
 use App\Http\Controllers\PagePickerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SecretController;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -43,6 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/media/rename', [MediaController::class, 'rename'])->name('media.rename');
     Route::delete('/media', [MediaController::class, 'destroy'])->name('media.destroy');
     Route::get('/media/thumb', [MediaController::class, 'thumb'])->name('media.thumb');
+
+    Route::resource('secrets', SecretController::class)->except('show');
 
     Route::get('/pages/{page:slug}/history', [PageHistoryController::class, 'index'])->name('pages.history');
     Route::get('/pages/{page:slug}/diff', [PageHistoryController::class, 'diff'])->name('pages.diff');

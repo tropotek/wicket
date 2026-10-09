@@ -24,6 +24,12 @@ class SecretPolicy
         return $secret->publish && $minimum !== null && $user->hasRole($minimum);
     }
 
+    /** The manager lists what the user can see; it's for those who can write secrets. */
+    public function viewAny(User $user): bool
+    {
+        return $this->create($user);
+    }
+
     public function create(User $user): bool
     {
         return $user->hasRole(Role::Editor);

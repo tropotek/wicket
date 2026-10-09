@@ -9,6 +9,12 @@ return [
     'registration' => (bool) env('WICKET_REGISTRATION', false),
 
     /*
+    | The secrets module: stored credentials embedded in pages. Off hides the manager
+    | and the editor button.
+    */
+    'secrets' => (bool) env('WICKET_SECRETS', true),
+
+    /*
     | Failed logins allowed per account (or unknown identifier) + IP before
     | lockout, and how long the lockout lasts.
     */

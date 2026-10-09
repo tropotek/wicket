@@ -65,6 +65,15 @@
                                     </a>
                                 </li>
                             @endcan
+                            @if (config('wicket.secrets'))
+                                @can('create', App\Models\Secret::class)
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('secrets.index') }}">
+                                            <i class="fa-solid fa-key me-1"></i>{{ __('Secrets') }}
+                                        </a>
+                                    </li>
+                                @endcan
+                            @endif
                             @can('admin')
                                 <li>
                                     <a class="dropdown-item" href="{{ route('admin.index') }}">
