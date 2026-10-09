@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Visibility;
+use App\Html\Pipeline;
+use App\Html\RenderContext;
 use App\Http\Requests\PageRequest;
 use App\Models\Page;
 use App\Models\PageRedirect;
@@ -20,7 +22,7 @@ use function Illuminate\Support\defer;
 
 class PageController extends Controller
 {
-    public function show(Request $request, Page $page): View|RedirectResponse
+    public function show(Request $request, Page $page, Pipeline $pipeline): View|RedirectResponse
     {
         if (Gate::denies('view', $page)) {
             // Logged-out visitors get a chance to log in; everyone else is refused.
@@ -37,6 +39,7 @@ class PageController extends Controller
         return view('pages.show', [
             'page' => $page,
             'content' => $page->latestContent,
+            'html' => $pipeline->render((string) $page->latestContent?->html, new RenderContext($page, $request->user())),
             'lock' => $request->user() ? app(PageLocker::class)->heldByOther($page, $request->user()) : null,
         ]);
     }

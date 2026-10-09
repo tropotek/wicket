@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Html\Pipeline;
 use App\Models\Page;
 use App\Models\User;
 use App\Support\Menu;
@@ -21,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
         $version = is_file($versionFile) ? trim(file_get_contents($versionFile)) : 'dev';
 
         config(['app.version' => $version]);
+
+        $this->app->bind(Pipeline::class, fn ($app) => new Pipeline($app, $app['config']->get('wicket.html_passes', [])));
     }
 
     /**

@@ -45,8 +45,8 @@
         </header>
 
         <div class="wk-content">
-            {{-- Editor HTML; sanitised on save (task 90) --}}
-            {!! $content?->html !!}
+            {{-- Editor HTML (sanitised on save, task 90) after the render passes --}}
+            {!! $html !!}
         </div>
 
         @if ($content)

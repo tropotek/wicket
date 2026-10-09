@@ -1,5 +1,7 @@
 <?php
 
+use App\Html\Passes\ExternalLinks;
+
 return [
 
     /*
@@ -37,6 +39,13 @@ return [
         'jpg', 'jpeg', 'png', 'gif', 'webp',
         'pdf', 'txt', 'csv', 'zip',
         'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp',
+    ],
+
+    /*
+    | Render passes run over page HTML before display, in this order (App\Html\Pipeline).
+    */
+    'html_passes' => [
+        ExternalLinks::class,
     ],
 
     'login' => [
