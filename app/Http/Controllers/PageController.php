@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Visibility;
 use App\Http\Requests\PageRequest;
 use App\Models\Page;
+use App\Models\PageRedirect;
 use App\Support\PageLocker;
 use App\Support\ReservedSlugs;
 use Illuminate\Http\RedirectResponse;
@@ -38,6 +39,19 @@ class PageController extends Controller
             'content' => $page->latestContent,
             'lock' => $request->user() ? app(PageLocker::class)->heldByOther($page, $request->user()) : null,
         ]);
+    }
+
+    /** No live page has this slug: 301 an old slug to its page's current one, else 404. */
+    public static function redirectOldSlug(Request $request): RedirectResponse
+    {
+        $page = PageRedirect::with('page')->firstWhere('slug', $request->route('page'))?->page;
+
+        abort_if($page === null, 404);
+
+        $url = route('pages.show', $page);
+        $query = $request->getQueryString();
+
+        return redirect($query ? $url.'?'.$query : $url, 301);
     }
 
     public function create(Request $request): View

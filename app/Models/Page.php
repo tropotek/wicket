@@ -33,6 +33,21 @@ class Page extends Model
         'views' => 0,
     ];
 
+    /**
+     * Keep page_redirects in step with slugs: a rename records the old slug, and a live
+     * page always owns its own slug (renaming back, or a new page claiming an old slug).
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (Page $page) {
+            if ($page->wasChanged('slug') && $old = $page->getOriginal('slug')) {
+                PageRedirect::updateOrCreate(['slug' => $old], ['page_id' => $page->id]);
+            }
+
+            PageRedirect::where('slug', $page->slug)->delete();
+        });
+    }
+
     protected function casts(): array
     {
         return [
