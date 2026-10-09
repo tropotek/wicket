@@ -17,6 +17,7 @@ class HealthController extends Controller
             'db' => $db ? 'ok' : 'error',
             'cache' => $health->cache() ? 'ok' : 'error',
             'scheduler' => $health->scheduler(),
+            'cron' => $health->cron(),
         ], $db ? 200 : 503);
     }
 }

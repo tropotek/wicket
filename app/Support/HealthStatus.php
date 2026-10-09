@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Console\Commands\Cron;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -57,8 +58,19 @@ class HealthStatus
 
     public function scheduler(): ?string
     {
+        return $this->timestamp(self::HEARTBEAT_KEY);
+    }
+
+    /** Last `wicket:cron` run. */
+    public function cron(): ?string
+    {
+        return $this->timestamp(Cron::LAST_RUN_KEY);
+    }
+
+    private function timestamp(string $key): ?string
+    {
         try {
-            $ts = Cache::get(self::HEARTBEAT_KEY);
+            $ts = Cache::get($key);
         } catch (Throwable) {
             return null;
         }

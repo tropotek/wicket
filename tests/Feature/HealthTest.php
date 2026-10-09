@@ -12,7 +12,7 @@ class HealthTest extends TestCase
     {
         $this->getJson('/up')
             ->assertOk()
-            ->assertJsonStructure(['version', 'uptime', 'db', 'cache', 'scheduler'])
+            ->assertJsonStructure(['version', 'uptime', 'db', 'cache', 'scheduler', 'cron'])
             ->assertJsonPath('db', 'ok')
             ->assertJsonPath('cache', 'ok')
             ->assertJsonPath('scheduler', null);
@@ -34,7 +34,7 @@ class HealthTest extends TestCase
         $this->getJson('/up')
             ->assertStatus(503)
             ->assertJsonPath('db', 'error')
-            ->assertJsonStructure(['version', 'uptime', 'db', 'cache', 'scheduler']);
+            ->assertJsonStructure(['version', 'uptime', 'db', 'cache', 'scheduler', 'cron']);
     }
 
     public function test_up_reports_cache_error_but_stays_200(): void
