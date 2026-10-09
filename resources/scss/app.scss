@@ -27,6 +27,90 @@ $font-family-sans-serif:
 
 [x-cloak] { display: none !important; }
 
+// Navbar: menu and tools are plain links with a soft hover, no button chrome.
+.navbar .nav-link {
+    border-radius: var(--bs-border-radius);
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bs-tertiary-bg);
+    }
+
+    &.active {
+        color: var(--bs-primary);
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .navbar-nav .nav-link {
+        padding-left: .6rem;
+        padding-right: .6rem;
+    }
+}
+
+.wk-nav-tools {
+    .vr {
+        align-self: center;
+        height: 1.5rem;
+    }
+
+    .nav-link {
+        padding: .375rem .6rem;
+    }
+
+    button.nav-link {
+        background: none;
+        border: 0;
+    }
+
+    // Stays a floating menu below md too (Bootstrap makes navbar dropdowns static there).
+    .dropdown-menu {
+        position: absolute;
+    }
+}
+
+.wk-nav-search {
+    position: relative;
+
+    > i {
+        position: absolute;
+        top: 50%;
+        left: .75rem;
+        transform: translateY(-50%);
+        font-size: .8em;
+        color: var(--bs-secondary-color);
+        pointer-events: none;
+    }
+
+    .form-control {
+        width: 13rem;
+        padding-left: 2rem;
+        border-color: transparent;
+        border-radius: var(--bs-border-radius-pill);
+        background-color: var(--bs-tertiary-bg);
+        transition: width .15s ease-in-out, background-color .15s ease-in-out;
+
+        &:focus {
+            width: 17rem;
+            background-color: var(--bs-body-bg);
+        }
+    }
+}
+
+.wk-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    color: var(--bs-primary);
+    background-color: var(--bs-primary-bg-subtle);
+}
+
 .wicket-footer {
     font-size: 0.85rem;
     opacity: 0.75;

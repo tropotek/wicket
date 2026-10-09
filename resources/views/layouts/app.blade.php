@@ -12,7 +12,7 @@
                 {{ config('app.name') }}
             </a>
             @if ($menu->isNotEmpty())
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-menu"
+                <button class="navbar-toggler order-1 ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#main-menu"
                         aria-controls="main-menu" aria-expanded="false" aria-label="{{ __('Toggle menu') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -24,7 +24,7 @@
                     </ul>
                 </div>
             @endif
-            <div class="ms-auto d-flex align-items-center gap-2"
+            <div class="wk-nav-tools ms-auto d-flex align-items-center"
                  x-data="{
                      theme: document.documentElement.dataset.bsTheme,
                      toggle() {
@@ -34,78 +34,97 @@
                      },
                  }">
                 @unless (request()->routeIs('search'))
-                    <form method="GET" action="{{ route('search') }}" role="search" class="d-none d-md-block">
-                        <input type="search" name="q" class="form-control form-control-sm" style="width: 12rem"
-                               placeholder="{{ __('Search') }}" aria-label="{{ __('Search pages') }}">
+                    <form method="GET" action="{{ route('search') }}" role="search" class="wk-nav-search d-none d-md-block">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <input type="search" name="q" class="form-control form-control-sm"
+                               placeholder="{{ __('Search pages') }}" aria-label="{{ __('Search pages') }}">
                     </form>
-                    <a href="{{ route('search') }}" class="btn btn-sm btn-outline-secondary d-md-none" aria-label="{{ __('Search') }}">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </a>
+                    <span class="vr mx-2 d-none d-md-block" aria-hidden="true"></span>
                 @endunless
-                <button class="btn btn-sm btn-outline-secondary"
-                        type="button"
-                        @click="toggle()"
-                        :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
-                    <i class="fa-solid" :class="theme === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
-                </button>
+                <ul class="navbar-nav flex-row align-items-center">
+                    @unless (request()->routeIs('search'))
+                        <li class="nav-item d-md-none">
+                            <a class="nav-link" href="{{ route('search') }}" title="{{ __('Search') }}" aria-label="{{ __('Search') }}">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </a>
+                        </li>
+                    @endunless
 
-                @can('create', App\Models\Page::class)
-                    <a class="btn btn-sm btn-outline-primary" href="{{ route('pages.create') }}">
-                        <i class="fa-solid fa-plus me-1"></i>{{ __('New page') }}
-                    </a>
-                @endcan
+                    @can('create', App\Models\Page::class)
+                        <li class="nav-item">
+                            <a @class(['nav-link', 'active' => request()->routeIs('pages.create')])
+                               href="{{ route('pages.create') }}" title="{{ __('New page') }}">
+                                <i class="fa-solid fa-plus"></i><span class="d-none d-lg-inline ms-1">{{ __('New page') }}</span>
+                            </a>
+                        </li>
+                    @endcan
 
-                @auth
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa-solid fa-user me-1"></i>{{ auth()->user()->name }}
+                    <li class="nav-item">
+                        <button class="nav-link" type="button" @click="toggle()"
+                                :title="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+                                :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
+                            <i class="fa-solid" :class="theme === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="fa-solid fa-id-card me-1"></i>{{ __('Profile') }}
-                                </a>
-                            </li>
-                            @can('media')
+                    </li>
+
+                    @auth
+                        @php($initials = collect(preg_split('/\s+/', trim(auth()->user()->name)))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->implode(''))
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false" title="{{ auth()->user()->name }}">
+                                <span class="wk-avatar" aria-hidden="true">{{ $initials }}</span>
+                                <span class="d-none d-lg-inline ms-2">{{ auth()->user()->name }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('media.index') }}">
-                                        <i class="fa-solid fa-photo-film me-1"></i>{{ __('Media') }}
+                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                        <i class="fa-solid fa-id-card me-1"></i>{{ __('Profile') }}
                                     </a>
                                 </li>
-                            @endcan
-                            @if (config('wicket.secrets'))
-                                @can('create', App\Models\Secret::class)
+                                @can('media')
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('secrets.index') }}">
-                                            <i class="fa-solid fa-key me-1"></i>{{ __('Secrets') }}
+                                        <a class="dropdown-item" href="{{ route('media.index') }}">
+                                            <i class="fa-solid fa-photo-film me-1"></i>{{ __('Media') }}
                                         </a>
                                     </li>
                                 @endcan
-                            @endif
-                            @can('admin')
+                                @if (config('wicket.secrets'))
+                                    @can('create', App\Models\Secret::class)
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('secrets.index') }}">
+                                                <i class="fa-solid fa-key me-1"></i>{{ __('Secrets') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+                                @endif
+                                @can('admin')
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.index') }}">
+                                            <i class="fa-solid fa-screwdriver-wrench me-1"></i>{{ __('Admin') }}
+                                        </a>
+                                    </li>
+                                @endcan
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('admin.index') }}">
-                                        <i class="fa-solid fa-screwdriver-wrench me-1"></i>{{ __('Admin') }}
-                                    </a>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fa-solid fa-right-from-bracket me-1"></i>{{ __('Log out') }}
+                                        </button>
+                                    </form>
                                 </li>
-                            @endcan
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="fa-solid fa-right-from-bracket me-1"></i>{{ __('Log out') }}
-                                    </button>
-                                </form>
+                            </ul>
+                        </li>
+                    @else
+                        @unless (request()->routeIs('login'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">
+                                    <i class="fa-solid fa-right-to-bracket me-1"></i>{{ __('Log in') }}
+                                </a>
                             </li>
-                        </ul>
-                    </div>
-                @else
-                    @unless (request()->routeIs('login'))
-                        <a class="btn btn-sm btn-primary" href="{{ route('login') }}">{{ __('Log in') }}</a>
-                    @endunless
-                @endauth
+                        @endunless
+                    @endauth
+                </ul>
             </div>
         </div>
     </nav>
