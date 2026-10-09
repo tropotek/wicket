@@ -1,6 +1,7 @@
 <?php
 
 use App\Html\Passes\ExternalLinks;
+use App\Html\Passes\InternalLinks;
 
 return [
 
@@ -46,6 +47,7 @@ return [
     */
     'html_passes' => [
         ExternalLinks::class,
+        InternalLinks::class,
     ],
 
     'login' => [

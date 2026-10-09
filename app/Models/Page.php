@@ -92,6 +92,12 @@ class Page extends Model
         return $this->hasMany(Content::class)->orderBy('id');
     }
 
+    /** Page slugs this page links to (current revision). @return HasMany<PageLink, $this> */
+    public function links(): HasMany
+    {
+        return $this->hasMany(PageLink::class);
+    }
+
     /** The current revision (highest id). @return HasOne<Content, $this> */
     public function latestContent(): HasOne
     {

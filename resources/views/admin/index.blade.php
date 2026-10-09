@@ -14,6 +14,13 @@
         <a href="{{ route('admin.pages.index') }}" class="list-group-item list-group-item-action">
             <i class="fa-solid fa-file-lines me-2"></i>{{ __('Pages') }}
         </a>
+        <a href="{{ route('admin.links.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
+            <i class="fa-solid fa-link-slash me-2"></i>{{ __('Broken links') }}
+            @php($brokenPages = App\Models\PageLink::broken()->distinct()->count('page_id'))
+            @if ($brokenPages)
+                <span class="badge text-bg-danger ms-auto">{{ $brokenPages }}</span>
+            @endif
+        </a>
         <a href="{{ route('admin.menu.index') }}" class="list-group-item list-group-item-action">
             <i class="fa-solid fa-bars me-2"></i>{{ __('Menu') }}
         </a>

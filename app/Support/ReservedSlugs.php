@@ -13,10 +13,19 @@ class ReservedSlugs
     /** Public paths that may not exist yet: Vite's build output, `storage:link`. */
     private const ALWAYS = ['build', 'storage'];
 
+    /** @var list<string>|null */
+    private ?array $all = null;
+
     public function __construct(private Router $router) {}
 
     /** @return list<string> */
     public function all(): array
+    {
+        return $this->all ??= $this->collect();
+    }
+
+    /** @return list<string> */
+    private function collect(): array
     {
         $fromRoutes = collect($this->router->getRoutes()->getRoutes())
             ->map(fn ($route) => explode('/', trim($route->uri(), '/'))[0])

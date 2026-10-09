@@ -31,3 +31,30 @@ $font-family-sans-serif:
     font-size: 0.85rem;
     opacity: 0.75;
 }
+
+// Page links in rendered content (App\Html\Passes\InternalLinks).
+.wk-content {
+    a.wk-page-new {
+        color: var(--bs-danger);
+        text-decoration-style: dashed;
+    }
+
+    a.wk-page-locked {
+        color: var(--bs-secondary-color);
+
+        &::after {
+            content: "\f023"; // fa-lock
+            font: var(--fa-font-solid);
+            font-size: .75em;
+            margin-left: .25em;
+        }
+    }
+
+    a.wk-link-external::after {
+        content: "\f35d"; // fa-up-right-from-square
+        font: var(--fa-font-solid);
+        font-size: .7em;
+        margin-left: .25em;
+        vertical-align: super;
+    }
+}

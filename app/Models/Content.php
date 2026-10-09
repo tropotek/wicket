@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\LinkIndex;
 use Database\Factories\ContentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +24,16 @@ class Content extends Model
         'keywords' => '',
         'description' => '',
     ];
+
+    /** A new revision is the page's current one: re-index its links. */
+    protected static function booted(): void
+    {
+        static::created(function (Content $content) {
+            if ($content->page) {
+                app(LinkIndex::class)->sync($content->page, $content->html);
+            }
+        });
+    }
 
     /** @return BelongsTo<Page, $this> */
     public function page(): BelongsTo
