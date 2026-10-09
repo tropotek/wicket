@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Html\Pipeline;
+use App\Html\Sanitizer;
 use App\Models\Page;
 use App\Models\User;
 use App\Support\Menu;
@@ -23,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
 
         config(['app.version' => $version]);
 
+        $this->app->singleton(Sanitizer::class, fn ($app) => new Sanitizer($app['config']->get('wicket.embed_hosts', [])));
         $this->app->bind(Pipeline::class, fn ($app) => new Pipeline($app, $app['config']->get('wicket.html_passes', [])));
     }
 

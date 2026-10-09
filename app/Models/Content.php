@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Html\Sanitizer;
 use App\Support\LinkIndex;
 use App\Support\SearchIndex;
 use Database\Factories\ContentFactory;
@@ -29,6 +30,9 @@ class Content extends Model
     /** A new revision is the page's current one: re-index its links and search text. */
     protected static function booted(): void
     {
+        // Backstop for imports and restores; the page form already sends clean HTML.
+        static::saving(fn (Content $content) => $content->html = app(Sanitizer::class)->clean($content->html));
+
         static::created(function (Content $content) {
             if ($content->page) {
                 app(LinkIndex::class)->sync($content->page, $content->html);

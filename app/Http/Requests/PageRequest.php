@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\Visibility;
+use App\Html\Sanitizer;
 use App\Models\Page;
 use App\Support\ReservedSlugs;
 use Closure;
@@ -20,6 +21,14 @@ class PageRequest extends FormRequest
         $page = $this->route('page');
 
         return $page ? Gate::allows('update', $page) : Gate::allows('create', Page::class);
+    }
+
+    /** Stored HTML is always the sanitised form, so change detection compares like with like. */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('html')) {
+            $this->merge(['html' => app(Sanitizer::class)->clean($this->input('html'))]);
+        }
     }
 
     /**

@@ -54,6 +54,11 @@ return [
         ContentImages::class,
     ],
 
+    /*
+    | Hosts an <iframe> in page content may show (https only). Everything else is stripped on save.
+    */
+    'embed_hosts' => ['www.youtube.com', 'www.youtube-nocookie.com', 'youtube.com', 'player.vimeo.com'],
+
     'login' => [
         'max_attempts' => (int) env('WICKET_LOGIN_MAX_ATTEMPTS', 5),
         'lockout_minutes' => (int) env('WICKET_LOGIN_LOCKOUT_MINUTES', 15),
