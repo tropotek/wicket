@@ -23,9 +23,22 @@
         @endif
 
         <header class="d-flex flex-wrap align-items-center gap-2 mb-3">
-            @if ($page->title_visible)
-                <h1 class="h2 mb-0">{{ $page->title }}</h1>
-            @endif
+            <div>
+                @if ($page->title_visible)
+                    <h1 class="h2 mb-0">{{ $page->title }}</h1>
+                @endif
+                @if ($content)
+                    <div class="wk-page-meta small fst-italic text-body-secondary">
+                        {{ __('Updated') }}
+                        <time datetime="{{ $content->created_at->toIso8601String() }}" title="{{ $content->created_at->toDayDateTimeString() }}">
+                            {{ $content->created_at->diffForHumans() }}
+                        </time>
+                        @if ($content->user)
+                            {{ __('by :name', ['name' => $content->user->name]) }}
+                        @endif
+                    </div>
+                @endif
+            </div>
             @can('update', $page)
                 @if ($lock)
                     <span class="badge text-bg-info" title="{{ __('Lock frees :when', ['when' => $lock->expires_at->diffForHumans()]) }}">
@@ -52,18 +65,6 @@
         </header>
 
         @include('pages._content')
-
-        @if ($content)
-            <footer class="wk-page-meta border-top mt-4 pt-2 small text-body-secondary">
-                {{ __('Updated') }}
-                <time datetime="{{ $content->created_at->toIso8601String() }}" title="{{ $content->created_at->toDayDateTimeString() }}">
-                    {{ $content->created_at->diffForHumans() }}
-                </time>
-                @if ($content->user)
-                    {{ __('by :name', ['name' => $content->user->name]) }}
-                @endif
-            </footer>
-        @endif
 
         @if ($backlinkCount)
             <aside class="wk-backlinks small mt-3" aria-label="{{ __('Pages linking here') }}">
