@@ -69,6 +69,10 @@
                               data-page-picker-url="{{ route('pages.picker') }}"
                               data-page-suggest-url="{{ route('pages.picker.suggest') }}"
                               data-page-slug-url="{{ route('pages.picker.slug') }}"
+                              @if (config('wicket.secrets') && auth()->user()->can('create', App\Models\Secret::class))
+                                  data-secret-picker-url="{{ route('secrets.picker') }}"
+                                  data-secret-edit-url="{{ url('secrets') }}"
+                              @endif
                               class="form-control font-monospace @error('html') is-invalid @enderror">{{ old('html', $content?->html) }}</textarea>
                     @error('html')
                         <div class="invalid-feedback">{{ $message }}</div>

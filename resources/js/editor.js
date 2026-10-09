@@ -44,13 +44,16 @@ export function mountEditors() {
             skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
             skin_url: 'default',
             content_css: textarea.dataset.contentCss ? [textarea.dataset.contentCss] : false,
-            content_style: 'body { padding: 1rem; }',
+            content_style: 'body { padding: 1rem; }'
+                + ' wk-secret { display: inline-block; padding: 0 .4em; border: 1px dashed currentColor; border-radius: .3em;'
+                + ' opacity: .8; cursor: default; white-space: nowrap; }'
+                + ' wk-secret::before { content: "\\1F512\\00A0"; }',
             plugins: [
                 'advlist', 'autolink', 'lists', 'link', 'image', 'media', 'charmap', 'preview', 'anchor',
                 'searchreplace', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'table', 'help',
                 'wordcount', 'save',
             ],
-            toolbar: 'save wikiPage | bold italic strikethrough | blocks | alignleft aligncenter alignright alignjustify'
+            toolbar: 'save wikiPage wikiSecret | bold italic strikethrough | blocks | alignleft aligncenter alignright alignjustify'
                 + ' | bullist numlist outdent indent | link image media table | removeformat code fullscreen',
             menubar: 'edit view insert format table tools help',
             contextmenu: false,
@@ -61,7 +64,8 @@ export function mountEditors() {
             images_upload_handler: (blobInfo, progress) => uploadImage(textarea.dataset.uploadUrl, blobInfo, progress),
             file_picker_types: 'file image',
             file_picker_callback: (callback, value, meta) => pickMedia(textarea.dataset.mediaUrl, callback, meta),
-            extended_valid_elements: 'i[*],em[*],b[*],a[*],div[*],span[*],img[*]',
+            extended_valid_elements: 'i[*],em[*],b[*],a[*],div[*],span[*],img[*],wk-secret[data-id|contenteditable]',
+            custom_elements: '~wk-secret',
             relative_urls: false,
             remove_script_host: true,
             save_enablewhendirty: false,
@@ -73,11 +77,41 @@ export function mountEditors() {
                     onAction: () => pickPage(editor, textarea.dataset.pagePickerUrl),
                 });
                 addPageAutocompleter(editor, textarea.dataset.pageSuggestUrl, textarea.dataset.pageSlugUrl);
+                if (textarea.dataset.secretPickerUrl) {
+                    addSecretButton(editor, textarea.dataset.secretPickerUrl, textarea.dataset.secretEditUrl);
+                }
                 editor.on('PreInit', () => {
                     editor.getDoc().documentElement.dataset.bsTheme = theme;
                 });
             },
         });
+    });
+}
+
+/**
+ * wikiSecret: pick (or create) a secret and embed it as <wk-secret data-id>, which the page view
+ * replaces with the secret. Double-click a placeholder to edit that secret in a new tab.
+ */
+function addSecretButton(editor, pickerUrl, editBaseUrl) {
+    editor.ui.registry.addButton('wikiSecret', {
+        icon: 'lock',
+        tooltip: 'Insert a secret',
+        onAction: () => editor.windowManager.openUrl({
+            title: 'Insert a secret',
+            url: new URL(pickerUrl, window.location.href).toString(),
+            width: Math.min(900, window.innerWidth - 40),
+            height: Math.min(700, window.innerHeight - 120),
+            onMessage: (api, data) => {
+                if (data.mceAction !== 'wicketSecretPick') return;
+                editor.insertContent(editor.dom.createHTML('wk-secret', { 'data-id': String(data.id), contenteditable: 'false' }, editor.dom.encode(data.name)) + '&nbsp;');
+                api.close();
+            },
+        }),
+    });
+
+    editor.on('dblclick', (e) => {
+        const placeholder = e.target.closest?.('wk-secret[data-id]');
+        if (placeholder) window.open(`${editBaseUrl}/${encodeURIComponent(placeholder.dataset.id)}/edit`, '_blank');
     });
 }
 

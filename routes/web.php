@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/media', [MediaController::class, 'destroy'])->name('media.destroy');
     Route::get('/media/thumb', [MediaController::class, 'thumb'])->name('media.thumb');
 
+    Route::get('/secrets/picker', [SecretController::class, 'picker'])->name('secrets.picker');
     Route::resource('secrets', SecretController::class)->except('show');
 
     Route::get('/pages/{page:slug}/history', [PageHistoryController::class, 'index'])->name('pages.history');

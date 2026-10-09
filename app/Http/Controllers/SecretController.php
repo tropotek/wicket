@@ -53,11 +53,37 @@ class SecretController extends Controller implements HasMiddleware
         ]);
     }
 
-    public function create(): View
+    /**
+     * The editor's wikiSecret dialog: pick a secret to embed. `pick=<id>` (after creating one
+     * from the dialog) posts that secret straight back to the editor.
+     */
+    public function picker(Request $request): View
+    {
+        Gate::authorize('viewAny', Secret::class);
+
+        $q = trim((string) $request->query('q'));
+        $secrets = Secret::visibleTo($request->user())
+            ->when($q !== '', fn ($query) => $query->where('name', 'like', "%{$q}%"))
+            ->orderBy('name')
+            ->paginate(10)
+            ->withQueryString();
+        $picked = $request->filled('pick') ? Secret::visibleTo($request->user())->find($request->integer('pick')) : null;
+
+        $view = $request->header('HX-Target') === 'secret-picker' ? 'secrets.picker._results' : 'secrets.picker.index';
+
+        return view($view, ['secrets' => $secrets, 'q' => $q, 'picked' => $picked]);
+    }
+
+    /** `picker=1`: inside the editor dialog (bare layout; saving inserts the new secret). */
+    public function create(Request $request): View
     {
         Gate::authorize('create', Secret::class);
 
-        return view('secrets.form', ['secret' => new Secret, 'visibilities' => Secret::visibilities()]);
+        return view('secrets.form', [
+            'secret' => new Secret,
+            'visibilities' => Secret::visibilities(),
+            'picker' => $request->boolean('picker'),
+        ]);
     }
 
     /** Authorised by SecretRequest. */
@@ -67,6 +93,10 @@ class SecretController extends Controller implements HasMiddleware
         $secret->author()->associate($request->user());
         $secret->save();
 
+        if ($request->boolean('picker')) {
+            return redirect()->route('secrets.picker', ['pick' => $secret->id]);
+        }
+
         return redirect()->route('secrets.index')->with('status', __('Secret ":name" created.', ['name' => $secret->name]));
     }
 
@@ -74,7 +104,7 @@ class SecretController extends Controller implements HasMiddleware
     {
         Gate::authorize('update', $secret);
 
-        return view('secrets.form', ['secret' => $secret, 'visibilities' => Secret::visibilities()]);
+        return view('secrets.form', ['secret' => $secret, 'visibilities' => Secret::visibilities(), 'picker' => false]);
     }
 
     /** Authorised by SecretRequest. */

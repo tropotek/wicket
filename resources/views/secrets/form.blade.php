@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(($picker ?? false) ? 'layouts.bare' : 'layouts.app')
 
 @php($editing = $secret->exists)
 
@@ -11,12 +11,15 @@
         @if ($editing)
             @method('PUT')
         @endif
+        @if ($picker ?? false)
+            <input type="hidden" name="picker" value="1">
+        @endif
 
         <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
             <h1 class="h3 mb-0 me-auto">
                 <i class="fa-solid fa-key me-2"></i>{{ $editing ? __('Edit secret') : __('New secret') }}
             </h1>
-            <a href="{{ route('secrets.index') }}" class="btn btn-outline-secondary">{{ __('Cancel') }}</a>
+            <a href="{{ ($picker ?? false) ? route('secrets.picker') : route('secrets.index') }}" class="btn btn-outline-secondary">{{ __('Cancel') }}</a>
             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>{{ __('Save') }}</button>
         </div>
 
