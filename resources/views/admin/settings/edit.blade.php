@@ -59,7 +59,7 @@
                         <div class="form-text">{{ __('Shown at /. Visitors who can\'t read it get the welcome page.') }}</div>
                         @error('wiki__home_page') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    @foreach (['wiki.registration' => __('Anyone can register an account'), 'wiki.secrets' => __('Secrets module (stored credentials in pages)')] as $key => $label)
+                    @foreach (['wiki.registration' => __('Anyone can register an account'), 'wiki.secrets' => __('Secrets module (stored credentials in pages)'), 'wiki.backlinks' => __('Show "Linked from" under each page')] as $key => $label)
                         <div class="form-check form-switch">
                             <input type="hidden" name="{{ $f($key) }}" value="0">
                             <input id="{{ $f($key) }}" type="checkbox" name="{{ $f($key) }}" value="1" role="switch" class="form-check-input" @checked($v($key))>

@@ -31,6 +31,7 @@ class SettingsTest extends TestCase
             'wiki__home_page' => '',
             'wiki__registration' => '0',
             'wiki__secrets' => '1',
+            'wiki__backlinks' => '1',
             'meta__description' => '',
             'meta__keywords' => '',
             'custom__css' => '',

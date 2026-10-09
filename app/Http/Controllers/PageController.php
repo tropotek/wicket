@@ -15,6 +15,7 @@ use App\Support\ReservedSlugs;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -24,6 +25,9 @@ use function Illuminate\Support\defer;
 
 class PageController extends Controller
 {
+    /** Backlinks listed under a page before "and more". */
+    private const BACKLINKS = 20;
+
     /** `/`: the home page chosen in Settings, when it exists and the visitor may read it. */
     public function home(Request $request, Pipeline $pipeline, RenderCache $cache): View|RedirectResponse
     {
@@ -55,6 +59,7 @@ class PageController extends Controller
             'content' => $page->latestContent,
             'html' => $this->render($page, $request, $pipeline, $cache),
             'lock' => $request->user() ? app(PageLocker::class)->heldByOther($page, $request->user()) : null,
+            ...$this->backlinks($page, $request),
         ]);
     }
 
@@ -80,6 +85,21 @@ class PageController extends Controller
             'slug' => $slug,
             'title' => Str::of($slug)->replace(['-', '_'], ' ')->ucfirst()->toString(),
         ], 404);
+    }
+
+    /** @return array{backlinks: Collection<int, Page>, backlinkCount: int} */
+    private function backlinks(Page $page, Request $request): array
+    {
+        if (! Settings::get('wiki.backlinks')) {
+            return ['backlinks' => collect(), 'backlinkCount' => 0];
+        }
+
+        $query = $page->backlinks($request->user());
+
+        return [
+            'backlinks' => (clone $query)->limit(self::BACKLINKS)->get(['id', 'title', 'slug']),
+            'backlinkCount' => $query->count(),
+        ];
     }
 
     /** Rendered content; cached for guests, whose render doesn't depend on who they are. */

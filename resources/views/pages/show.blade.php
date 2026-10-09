@@ -59,5 +59,19 @@
                 @endif
             </footer>
         @endif
+
+        @if ($backlinkCount)
+            <aside class="wk-backlinks small mt-3" aria-label="{{ __('Pages linking here') }}">
+                <span class="text-body-secondary">
+                    <i class="fa-solid fa-link me-1"></i>{{ trans_choice('Linked from :count page:|Linked from :count pages:', $backlinkCount) }}
+                </span>
+                @foreach ($backlinks as $link)
+                    <a href="{{ route('pages.show', $link) }}" class="ms-1">{{ $link->title }}</a>@unless ($loop->last),@endunless
+                @endforeach
+                @if ($backlinkCount > $backlinks->count())
+                    <span class="text-body-secondary">{{ __('and :count more', ['count' => $backlinkCount - $backlinks->count()]) }}</span>
+                @endif
+            </aside>
+        @endif
     </article>
 @endsection

@@ -114,6 +114,24 @@ class Page extends Model
         return $this->hasMany(PageLink::class);
     }
 
+    /**
+     * Live pages the viewer may see whose current revision links here — by the current slug or an
+     * old one (task 37 redirects).
+     *
+     * @return Builder<Page>
+     */
+    public function backlinks(?User $viewer): Builder
+    {
+        $slugs = PageRedirect::where('page_id', $this->id)->select('slug')
+            ->union(Page::query()->whereKey($this->id)->select('slug'));
+
+        // Page::query() — inside this class a static call would hit the protected scope method directly.
+        return Page::query()->visibleTo($viewer)
+            ->whereKeyNot($this->id)
+            ->whereIn('id', PageLink::query()->select('page_id')->whereIn('slug', $slugs))
+            ->orderBy('title');
+    }
+
     /** The current revision (highest id). @return HasOne<Content, $this> */
     public function latestContent(): HasOne
     {
