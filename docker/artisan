@@ -1,0 +1,8 @@
+#!/bin/sh
+# `docker compose exec wicket artisan …` — runs artisan as the app user even when exec'd as root,
+# so commands never leave root-owned files in /app/data or storage.
+cd /app
+if [ "$(id -u)" = 0 ]; then
+    exec su-exec app php artisan "$@"
+fi
+exec php artisan "$@"

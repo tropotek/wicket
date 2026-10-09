@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Behind a reverse proxy: TRUSTED_PROXIES="*" or a comma list, so https URLs and secure cookies work.
+        if ($proxies = env('TRUSTED_PROXIES')) {
+            $middleware->trustProxies(at: $proxies === '*' ? '*' : array_map('trim', explode(',', $proxies)));
+        }
+
         $middleware->alias([
             'role' => EnsureRole::class,
         ]);

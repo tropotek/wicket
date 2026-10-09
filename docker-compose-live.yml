@@ -1,0 +1,49 @@
+# Wicket — production compose for operators.
+#
+#   docker compose -f docker-compose-live.yml up -d        start (migrations run automatically)
+#   docker compose -f docker-compose-live.yml pull && \
+#   docker compose -f docker-compose-live.yml up -d        upgrade to a newer image
+#   docker compose -f docker-compose-live.yml logs wicket  the first admin's generated password is printed here once
+#   docker compose -f docker-compose-live.yml exec wicket artisan <command>   run artisan (always as the app user)
+#
+# Put settings in a .env file next to this one (optional), e.g.:
+#   APP_URL=https://wiki.example.org
+#   WICKET_ADMIN_EMAIL=you@example.org
+#   TRUSTED_PROXIES=*            # when a reverse proxy terminates TLS in front of this container
+#   SESSION_SECURE_COOKIE=true   # when the site is served over https
+#   MAIL_MAILER=smtp  MAIL_HOST=…  MAIL_PORT=587  MAIL_USERNAME=…  MAIL_PASSWORD=…  MAIL_FROM_ADDRESS=wiki@example.org
+#
+# Backups (host crontab, nightly): consistent DB snapshot, then archive the whole data/ directory.
+#   15 2 * * *  cd /srv/wicket && docker compose -f docker-compose-live.yml exec -T wicket artisan wicket:backup \
+#               && tar -czf backups/wicket-$(date +\%F).tgz data
+# data/private/.app-key decrypts every stored secret: keep it with the database, never lose it.
+# (Rotating APP_KEY needs the old one in APP_PREVIOUS_KEYS or secrets become unreadable.)
+
+name: wicket-live  # distinct from the dev stack (docker-compose.yml) on the same machine
+
+services:
+  wicket:
+    image: ${WICKET_IMAGE:-ghcr.io/tropotek/wicket}:${WICKET_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      # Host port → the container's FrankenPHP/Octane on 8080 (plain HTTP; put TLS in a reverse proxy).
+      - "${WICKET_PORT:-8080}:8080"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      APP_NAME: ${APP_NAME:-Wicket}
+    volumes:
+      # Everything that must survive an upgrade, in one directory:
+      #   data/db/wiki.sqlite       the database
+      #   data/media/               uploads and the file manager's files
+      #   data/private/.app-key     generated APP_KEY (unless APP_KEY is set in .env)
+      #   data/backups/             wicket:backup snapshots
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
