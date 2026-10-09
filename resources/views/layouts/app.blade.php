@@ -140,7 +140,8 @@
                     · <a href="{{ route('contact') }}" class="link-secondary">{{ __('Contact') }}</a>
                 @endif
             </span>
-            <span>v{{ config('app.version') }}</span>
+            <a href="{{ config('wicket.repo_url') }}" class="link-secondary" target="_blank" rel="noopener noreferrer"
+               title="{{ __('Wicket on GitHub') }}"><i class="fa-brands fa-github me-1"></i>Wicket v{{ config('app.version') }}</a>
         </div>
     </footer>
     @stack('editor-scripts')

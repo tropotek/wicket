@@ -18,4 +18,10 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function test_footer_version_links_to_the_repository(): void
+    {
+        $this->get('/')->assertSee('href="'.config('wicket.repo_url').'"', false)
+            ->assertSee('Wicket v'.config('app.version'));
+    }
 }

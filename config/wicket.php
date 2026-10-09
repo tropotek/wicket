@@ -61,6 +61,11 @@ return [
     ],
 
     /*
+    | Wicket's source code, linked from the footer's version.
+    */
+    'repo_url' => 'https://github.com/tropotek/wicket',
+
+    /*
     | Other hostnames this wiki answers or used to answer on (comma-separated), e.g. the old tkwiki
     | domain. Links and images pointing at them, or at APP_URL's host, are stored as paths.
     */
