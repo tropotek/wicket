@@ -20,7 +20,7 @@ class SecretsPass implements Pass
     /** Columns tkwiki stores encrypted. */
     public const FIELDS = ['url', 'username', 'password', 'otp', 'keys', 'notes'];
 
-    /** tkwiki Secret::PERM_* → visibility (secrets are never public). */
+    /** tkwiki Secret::PERM_* → visibility (public 0 becomes members: secrets are never public). */
     private const VISIBILITY = [1 => Visibility::Members, 2 => Visibility::Editors, 9 => Visibility::Private];
 
     /**
@@ -84,9 +84,12 @@ class SecretsPass implements Pass
             }
 
             $visibility = self::VISIBILITY[(int) $row->permission] ?? null;
-            if ($visibility === null) {
+            if ((int) $row->permission === 0) {
                 $visibility = Visibility::Members;
-                $context->warn("Secret \"{$row->name}\" was public (permission {$row->permission}); imported as members-only.");
+                $context->warn("Secret \"{$row->name}\" was public; imported as members-only (secrets are never public).");
+            } elseif ($visibility === null) {
+                $visibility = Visibility::Private;
+                $context->warn("Secret \"{$row->name}\" had unknown permission {$row->permission}; imported as private.");
             }
 
             $secret = new Secret;

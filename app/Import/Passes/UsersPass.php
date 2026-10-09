@@ -15,8 +15,12 @@ use Illuminate\Support\Str;
 /** tkwiki `auth` + `user` → users. Password hashes are copied verbatim; Laravel rehashes them on login. */
 class UsersPass implements Pass
 {
-    /** tkwiki User::PERM_ADMIN. */
+    /** tkwiki User::PERM_* bits in `auth.permissions`. */
     private const PERM_ADMIN = 0x1;
+
+    private const PERM_SYSADMIN = 0x2;
+
+    private const PERM_MANAGE_MEMBERS = 0x4;
 
     public function name(): string
     {
@@ -57,7 +61,7 @@ class UsersPass implements Pass
                 'name' => trim($row->given_name.' '.$row->family_name) ?: $username,
                 'email' => $email,
                 'password' => $password,
-                'role' => $this->role((int) $row->permissions, (string) $row->type)->value,
+                'role' => $this->role((int) $row->permissions, (string) $row->type, $username, $context)->value,
                 'active' => (bool) $row->active,
                 'timezone' => $row->timezone ?: null,
                 'last_login_at' => $row->last_login,
@@ -81,13 +85,27 @@ class UsersPass implements Pass
                 'a.created', 'a.modified', 'u.user_id', 'u.type', 'u.given_name', 'u.family_name');
     }
 
-    private function role(int $permissions, string $type): Role
+    /** Mapping table: _notes/laravel-rewrite/C3-import-permissions.md. */
+    private function role(int $permissions, string $type, string $username, ImportContext $context): Role
     {
-        return match (true) {
-            ($permissions & self::PERM_ADMIN) !== 0 => Role::Admin,
-            $type === 'staff' => Role::Editor,
-            default => Role::Member,
+        if ($permissions & (self::PERM_ADMIN | self::PERM_SYSADMIN)) {
+            return Role::Admin;
+        }
+
+        $role = match ($type) {
+            'staff' => Role::Editor,
+            'member' => Role::Member,
+            default => null,
         };
+        if ($role === null) {
+            $role = Role::Member;
+            $context->warn("User \"{$username}\" had unknown type \"{$type}\"; imported as member.");
+        }
+        if ($permissions & self::PERM_MANAGE_MEMBERS) {
+            $context->warn("User \"{$username}\" could manage members in tkwiki; Wicket has no such role, so they are {$role->value}. Promote to admin by hand if needed.");
+        }
+
+        return $role;
     }
 
     /** @param  array<string, true>  $taken  lower-cased usernames already used */
