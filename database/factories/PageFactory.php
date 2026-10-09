@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Visibility;
 use App\Models\Content;
 use App\Models\Page;
 use App\Models\User;
@@ -25,7 +26,7 @@ class PageFactory extends Factory
             'slug' => Str::slug($title),
             'category' => '',
             'template' => '',
-            'visibility' => 'public',
+            'visibility' => Visibility::Public,
             'author_id' => User::factory(),
             'publish' => true,
             'title_visible' => true,

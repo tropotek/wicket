@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\Visibility;
 use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +26,7 @@ class Page extends Model
     protected $attributes = [
         'category' => '',
         'template' => '',
-        'visibility' => 'public',
+        'visibility' => 'private',
         'publish' => true,
         'title_visible' => true,
         'views' => 0,
@@ -32,10 +35,33 @@ class Page extends Model
     protected function casts(): array
     {
         return [
+            'visibility' => Visibility::class,
             'publish' => 'boolean',
             'title_visible' => 'boolean',
             'views' => 'integer',
         ];
+    }
+
+    /**
+     * Pages $user may read: the query form of PagePolicy::view().
+     *
+     * @param  Builder<Page>  $query
+     */
+    #[Scope]
+    protected function visibleTo(Builder $query, ?User $user): void
+    {
+        if ($user?->isAdmin()) {
+            return;
+        }
+
+        $byRole = collect(Visibility::cases())
+            ->filter(fn (Visibility $v) => ($min = $v->minimumRole()) && $user?->hasRole($min))
+            ->map->value
+            ->push(Visibility::Public->value);
+
+        $query->where(fn (Builder $q) => $q
+            ->whereIn('visibility', $byRole->all())
+            ->when($user, fn (Builder $q) => $q->orWhere('author_id', $user->id)));
     }
 
     /** @return BelongsTo<User, $this> */

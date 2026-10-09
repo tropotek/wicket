@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Visibility;
 use App\Models\Content;
 use App\Models\Page;
 use App\Models\User;
@@ -35,7 +36,7 @@ class PageSchemaTest extends TestCase
         $this->assertTrue($page->publish);
         $this->assertTrue($page->title_visible);
         $this->assertSame(0, $page->views);
-        $this->assertSame('public', $page->visibility);
+        $this->assertSame(Visibility::Public, $page->visibility);
         $this->assertNull($page->latestContent);
     }
 

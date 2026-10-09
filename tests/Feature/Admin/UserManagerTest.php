@@ -18,7 +18,7 @@ class UserManagerTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin = User::factory()->admin()->create(['username' => 'root']);
+        $this->admin = User::factory()->admin()->create(['username' => 'root', 'name' => 'Root', 'email' => 'root@example.com']);
     }
 
     private function payload(User $user, array $overrides = []): array
@@ -47,8 +47,9 @@ class UserManagerTest extends TestCase
 
     public function test_index_lists_and_searches_users(): void
     {
-        User::factory()->create(['username' => 'alice', 'name' => 'Alice A']);
-        User::factory()->create(['username' => 'bob', 'name' => 'Bob B']);
+        // Fixed emails: a random one could contain the search term.
+        User::factory()->create(['username' => 'alice', 'name' => 'Alice A', 'email' => 'alice@example.com']);
+        User::factory()->create(['username' => 'bob', 'name' => 'Bob B', 'email' => 'bob@example.com']);
 
         $this->actingAs($this->admin)->get('/admin/users')
             ->assertOk()->assertSee('alice')->assertSee('bob');

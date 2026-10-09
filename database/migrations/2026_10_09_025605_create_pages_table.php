@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('category', 128)->default('')->index();
             $table->string('template', 64)->default('');
-            $table->string('visibility', 16)->default('public');
+            $table->string('visibility', 16)->default('private');
             $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
             $table->boolean('publish')->default(true);
             $table->boolean('title_visible')->default(true);
