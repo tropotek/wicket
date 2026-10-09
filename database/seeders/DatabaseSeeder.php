@@ -33,5 +33,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Member User',
             'email' => 'member@example.com',
         ]);
+
+        $this->call(DevPageSeeder::class);
     }
 }

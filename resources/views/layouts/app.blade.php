@@ -16,6 +16,7 @@
     </script>
 
     @vite(['resources/scss/app.scss', 'resources/js/app.js'])
+    @stack('head')
 </head>
 <body class="d-flex flex-column min-vh-100"
       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'>

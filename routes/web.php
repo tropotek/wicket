@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -36,3 +37,8 @@ Route::get('/up', HealthController::class)
     ]);
 
 require __DIR__.'/auth.php';
+
+// Catch-all page route: keep last so fixed routes above take precedence.
+Route::get('/{page:slug}', [PageController::class, 'show'])
+    ->where('page', '[A-Za-z0-9._-]+')
+    ->name('pages.show');
