@@ -44,10 +44,7 @@
             @endcan
         </header>
 
-        <div class="wk-content">
-            {{-- Editor HTML (sanitised on save, task 90) after the render passes --}}
-            {!! $html !!}
-        </div>
+        @include('pages._content')
 
         @if ($content)
             <footer class="wk-page-meta border-top mt-4 pt-2 small text-body-secondary">

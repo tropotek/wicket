@@ -13,6 +13,7 @@ import 'tinymce/plugins/anchor';
 import 'tinymce/plugins/autolink';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
+import 'tinymce/plugins/codesample';
 import 'tinymce/plugins/fullscreen';
 import 'tinymce/plugins/help';
 import 'tinymce/plugins/help/js/i18n/keynav/en.js';
@@ -51,10 +52,27 @@ export function mountEditors() {
             plugins: [
                 'advlist', 'autolink', 'lists', 'link', 'image', 'media', 'charmap', 'preview', 'anchor',
                 'searchreplace', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'table', 'help',
-                'wordcount', 'save',
+                'wordcount', 'save', 'codesample',
+            ],
+            codesample_languages: [
+                { text: 'Plain text', value: 'none' },
+                { text: 'HTML/XML', value: 'markup' },
+                { text: 'CSS', value: 'css' },
+                { text: 'SCSS', value: 'scss' },
+                { text: 'JavaScript', value: 'javascript' },
+                { text: 'JSON', value: 'json' },
+                { text: 'PHP', value: 'php' },
+                { text: 'Python', value: 'python' },
+                { text: 'SQL', value: 'sql' },
+                { text: 'Bash', value: 'bash' },
+                { text: 'Batch', value: 'batch' },
+                { text: 'C', value: 'c' },
+                { text: 'C++', value: 'cpp' },
+                { text: 'Java', value: 'java' },
+                { text: 'Arduino', value: 'arduino' },
             ],
             toolbar: 'save wikiPage wikiSecret | bold italic strikethrough | blocks | alignleft aligncenter alignright alignjustify'
-                + ' | bullist numlist outdent indent | link image media table | removeformat code fullscreen',
+                + ' | bullist numlist outdent indent | link image media table codesample | removeformat code fullscreen',
             menubar: 'edit view insert format table tools help',
             contextmenu: false,
             statusbar: false,

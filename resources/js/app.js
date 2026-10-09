@@ -1,6 +1,7 @@
 import 'bootstrap';
 import Alpine from 'alpinejs';
 import htmx from 'htmx.org';
+import lightbox from './components/lightbox.js';
 import secretCard from './components/secret-card.js';
 
 window.Alpine = Alpine;
@@ -15,6 +16,7 @@ htmx.config.responseHandling = [
     { code: '...', swap: false },
 ];
 
+Alpine.data('lightbox', lightbox);
 Alpine.data('secretCard', secretCard);
 
 Alpine.start();

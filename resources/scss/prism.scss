@@ -1,0 +1,22 @@
+@use "sass:meta";
+
+// Light theme by default, Tomorrow Night when the site is dark.
+@include meta.load-css("prismjs/themes/prism");
+@include meta.load-css("prismjs/plugins/line-numbers/prism-line-numbers");
+
+[data-bs-theme="dark"] {
+    @include meta.load-css("prismjs/themes/prism-tomorrow");
+
+    // The light theme gives these a pale background that Tomorrow doesn't reset.
+    .token.operator,
+    .token.entity,
+    .token.url {
+        background: none;
+    }
+}
+
+// Bootstrap's <pre> spacing; Prism's own margins otherwise double up.
+.wk-content pre[class*="language-"] {
+    border-radius: var(--bs-border-radius);
+    font-size: .875em;
+}

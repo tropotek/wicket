@@ -1,5 +1,6 @@
 <?php
 
+use App\Html\Passes\ContentImages;
 use App\Html\Passes\ExternalLinks;
 use App\Html\Passes\InternalLinks;
 use App\Html\Passes\SecretPlaceholders;
@@ -50,6 +51,7 @@ return [
         ExternalLinks::class,
         InternalLinks::class,
         SecretPlaceholders::class,
+        ContentImages::class,
     ],
 
     'login' => [

@@ -41,8 +41,6 @@
         @if ($page->title_visible)
             <h1 class="h2 mb-3">{{ $page->title }}</h1>
         @endif
-        <div class="wk-content">
-            {!! $html !!}
-        </div>
+        @include('pages._content')
     </article>
 @endsection
