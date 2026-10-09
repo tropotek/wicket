@@ -17,6 +17,9 @@ class ImportContext
     /** @var list<string> problems worth showing the operator (skipped rows, renamed users…) */
     public array $warnings = [];
 
+    /** @var list<string> summary lines shown after the counts table (e.g. media size) */
+    public array $notes = [];
+
     public function __construct(
         public readonly LegacySource $source,
         public readonly ?string $oldKey = null,
@@ -37,5 +40,10 @@ class ImportContext
     public function warn(string $message): void
     {
         $this->warnings[] = $message;
+    }
+
+    public function note(string $message): void
+    {
+        $this->notes[] = $message;
     }
 }

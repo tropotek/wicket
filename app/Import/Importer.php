@@ -16,6 +16,7 @@ class Importer
         Passes\MenuPass::class,
         Passes\SecretsPass::class,
         Passes\RevisionsPass::class,
+        Passes\MediaPass::class,
     ];
 
     /** Wicket tables a forced re-import empties first (children before parents). */

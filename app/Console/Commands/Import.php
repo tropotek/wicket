@@ -53,6 +53,13 @@ class Import extends Command
 
         $dryRun = (bool) $this->option('dry-run');
 
+        $mediaSrc = $this->option('media-src') ?: null;
+        if ($mediaSrc !== null && ! is_dir($mediaSrc)) {
+            $this->components->error("--media-src is not a directory: {$mediaSrc}");
+
+            return self::FAILURE;
+        }
+
         if (! $dryRun && ! $importer->targetIsEmpty() && ! $this->option('force')) {
             $this->components->error('Wicket already has users or pages. Import into a fresh install, or pass --force to empty them first.');
 
@@ -79,11 +86,15 @@ class Import extends Command
             $this->components->warn('Emptied existing users, pages, menu, secrets and settings (--force).');
         }
 
-        $context = new ImportContext($source, $oldKey ?: null, $this->option('media-src') ?: null, $dryRun);
+        $context = new ImportContext($source, $oldKey ?: null, $mediaSrc, $dryRun);
         $report = $importer->run($context, fn (string $name) => $this->components->task($name));
 
         $this->table(['Pass', 'Found', $dryRun ? 'Would import' : 'Imported'], collect($report)
             ->map(fn ($r, $name) => [$name, $r['count'], $r['imported'] ?? $r['count']])->values()->all());
+
+        foreach ($context->notes as $note) {
+            $this->components->info($note);
+        }
 
         foreach ($context->warnings as $warning) {
             $this->components->warn($warning);
