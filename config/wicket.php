@@ -61,6 +61,12 @@ return [
     ],
 
     /*
+    | Other hostnames this wiki answers or used to answer on (comma-separated), e.g. the old tkwiki
+    | domain. Links and images pointing at them, or at APP_URL's host, are stored as paths.
+    */
+    'site_hosts' => array_values(array_filter(array_map('trim', explode(',', (string) env('WICKET_SITE_HOSTS', ''))))),
+
+    /*
     | Hosts an <iframe> in page content may show (https only). Everything else is stripped on save.
     */
     'embed_hosts' => ['www.youtube.com', 'www.youtube-nocookie.com', 'youtube.com', 'player.vimeo.com'],

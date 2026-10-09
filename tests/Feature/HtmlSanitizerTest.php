@@ -98,4 +98,24 @@ class HtmlSanitizerTest extends TestCase
 
         $this->assertSame('<p>Imported</p>', $content->fresh()->html);
     }
+
+    public function test_links_to_this_site_are_stored_as_paths(): void
+    {
+        config(['app.url' => 'https://wiki.example.org:8443', 'wicket.site_hosts' => ['tkwiki.example.org', 'Old.Example.org']]);
+
+        $cases = [
+            '<a href="https://tkwiki.example.org/data/media/a%20b.pdf?x=1#p">f</a>' => '<a href="/data/media/a%20b.pdf?x&#61;1#p">f</a>',
+            '<a href="http://wiki.example.org">home</a>' => '<a href="/">home</a>',
+            '<a href="https://old.example.org:9443/Some_Page#top">p</a>' => '<a href="/Some_Page#top">p</a>',
+            '<img src="http://www.tkwiki.example.org/data/media/x.png" alt="x">' => '<img src="/data/media/x.png" alt="x" />',
+            '<a href="https://other.example.org/x">o</a>' => '<a href="https://other.example.org/x">o</a>',
+            '<a href="https://tkwiki.example.org.evil.example/x">e</a>' => '<a href="https://tkwiki.example.org.evil.example/x">e</a>',
+            '<a href="mailto:me@tkwiki.example.org">m</a>' => '<a href="mailto:me&#64;tkwiki.example.org">m</a>',
+        ];
+
+        foreach ($cases as $in => $out) {
+            $this->assertSame($out, $this->clean($in), $in);
+            $this->assertSame($out, $this->clean($out), "idempotent: {$in}");
+        }
+    }
 }

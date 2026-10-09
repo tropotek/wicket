@@ -133,6 +133,20 @@ class ImportPassesTest extends TestCase
         $this->get('/Home')->assertOk()->assertSee('href="/Wiki_How_To"', false);
     }
 
+    public function test_links_to_the_old_site_become_paths(): void
+    {
+        config(['wicket.site_hosts' => ['tkwiki.example.org']]);
+        $sam = $this->legacyUser('staff', 'sam');
+        $home = $this->legacy->insert('page', ['user_id' => $sam, 'title' => 'Home', 'url' => 'Home', 'permission' => 0]);
+        $this->legacy->insert('content', ['page_id' => $home, 'user_id' => $sam,
+            'html' => '<p><a href="https://tkwiki.example.org/data/media/Mick/a.pdf">a</a> <a href="https://bt.example.org/x">bt</a></p>']);
+
+        $this->artisan('wicket:import', ['--from' => $this->legacy->dsn(), '--no-interaction' => true])->assertSuccessful()->run();
+
+        $this->assertSame('<p><a href="/data/media/Mick/a.pdf">a</a> <a href="https://bt.example.org/x">bt</a></p>',
+            Page::where('slug', 'Home')->sole()->latestContent->html);
+    }
+
     public function test_dry_run_counts_each_pass(): void
     {
         $sam = $this->legacyUser('staff', 'sam');
