@@ -17,6 +17,14 @@ $font-family-sans-serif:
 
 @import "bootstrap/scss/bootstrap";
 
+// Font Awesome Free. Webfonts live at resources/webfonts/ (copied from the
+// npm package by the postinstall script); the default `../webfonts` path then
+// resolves relative to this file for both dev serving and production builds.
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/solid";
+@import "@fortawesome/fontawesome-free/scss/regular";
+@import "@fortawesome/fontawesome-free/scss/brands";
+
 [x-cloak] { display: none !important; }
 
 .wicket-footer {

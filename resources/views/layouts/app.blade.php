@@ -38,7 +38,7 @@
                         type="button"
                         @click="toggle()"
                         :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
-                    <span x-text="theme === 'dark' ? '☀' : '☾'"></span>
+                    <i class="fa-solid" :class="theme === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
                 </button>
             </div>
         </div>

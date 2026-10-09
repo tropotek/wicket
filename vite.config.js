@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => {
             port,
             strictPort: true,
             origin: `http://${host}:${port}`,
+            cors: {
+                origin: env.APP_URL || `http://${host}:${port}`,
+            },
             hmr: { host, port },
             watch: {
                 ignored: ['**/storage/framework/views/**'],
