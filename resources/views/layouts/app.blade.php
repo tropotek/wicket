@@ -34,12 +34,11 @@
                      },
                  }">
                 @unless (request()->routeIs('search'))
-                    <form method="GET" action="{{ route('search') }}" role="search" class="wk-nav-search d-none d-md-block">
+                    <form method="GET" action="{{ route('search') }}" role="search" class="wk-nav-search d-none d-md-block me-2">
                         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                         <input type="search" name="q" class="form-control form-control-sm"
                                placeholder="{{ __('Search pages') }}" aria-label="{{ __('Search pages') }}">
                     </form>
-                    <span class="vr mx-2 d-none d-md-block" aria-hidden="true"></span>
                 @endunless
                 <ul class="navbar-nav flex-row align-items-center">
                     @unless (request()->routeIs('search'))
