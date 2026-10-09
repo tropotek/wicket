@@ -39,6 +39,9 @@ class SettingsTest extends TestCase
             'custom__js' => '',
             'maintenance__enabled' => '0',
             'maintenance__message' => '',
+            'theme__accent' => '#0d6efd',
+            'theme__radius' => 'default',
+            'theme__font' => 'system',
         ];
     }
 
@@ -108,6 +111,20 @@ class SettingsTest extends TestCase
         $this->put(route('admin.settings.update'), $this->form(['wiki__home_page' => (string) $public->id]))
             ->assertSessionHasNoErrors();
         $this->assertSame($public->id, Settings::get('wiki.home_page'));
+    }
+
+    public function test_appearance_is_validated(): void
+    {
+        $this->actingAs($this->admin);
+
+        foreach (['theme__accent' => 'red', 'theme__radius' => 'huge', 'theme__font' => 'comic'] as $field => $bad) {
+            $this->put(route('admin.settings.update'), $this->form([$field => $bad]))->assertSessionHasErrors($field);
+        }
+
+        $this->put(route('admin.settings.update'), $this->form(['theme__accent' => '#0F766E', 'theme__radius' => 'round', 'theme__font' => 'mono']))
+            ->assertSessionHasNoErrors();
+        $this->assertSame(['#0f766e', 'round', 'mono'], [Settings::get('theme.accent'), Settings::get('theme.radius'), Settings::get('theme.font')]);
+        $this->get(route('admin.settings.edit'))->assertSee('value="#0f766e"', false);
     }
 
     public function test_maintenance_mode(): void

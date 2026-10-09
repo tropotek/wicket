@@ -45,6 +45,9 @@ class Settings
             'custom.js' => ['type' => 'string', 'rules' => $text(65535)],
             'maintenance.enabled' => ['type' => 'bool', 'rules' => ['boolean']],
             'maintenance.message' => ['type' => 'string', 'rules' => $text(2000)],
+            'theme.accent' => ['type' => 'color', 'rules' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/']],
+            'theme.radius' => ['type' => 'string', 'rules' => ['required', Rule::in(Theme::RADII)]],
+            'theme.font' => ['type' => 'string', 'rules' => ['required', Rule::in(Theme::FONTS)]],
         ];
     }
 
@@ -65,6 +68,9 @@ class Settings
             'custom.js' => '',
             'maintenance.enabled' => false,
             'maintenance.message' => '',
+            'theme.accent' => Theme::DEFAULT_ACCENT,
+            'theme.radius' => 'default',
+            'theme.font' => 'system',
         ];
     }
 
@@ -103,6 +109,7 @@ class Settings
         return match ($type) {
             'bool' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
             'int' => $value === null || $value === '' ? null : (int) $value,
+            'color' => strtolower((string) $value),
             default => (string) ($value ?? ''),
         };
     }

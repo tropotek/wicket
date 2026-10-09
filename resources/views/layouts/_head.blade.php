@@ -26,6 +26,10 @@
 
 @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 @stack('head')
+@if ($themeCss = app(App\Support\Theme::class)->css())
+    {{-- Settings → Appearance (validated values only). --}}
+    <style id="wk-theme">{!! $themeCss !!}</style>
+@endif
 @if ($css = App\Facades\Settings::get('custom.css'))
     {{-- Admin-authored (Settings → Custom code); "</" escaped so it can't close the tag. --}}
     <style>{!! str_replace('</', '<\/', $css) !!}</style>

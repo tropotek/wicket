@@ -83,6 +83,46 @@
             </div>
 
             <div class="col-lg-6">
+                <fieldset class="card mb-4" x-data="{ accent: @js($v('theme.accent')) }"><div class="card-body">
+                    <legend class="h5">{{ __('Appearance') }}</legend>
+                    <div class="mb-3">
+                        <span class="form-label d-block" id="accent-label">{{ __('Accent colour') }}</span>
+                        <div class="d-flex flex-wrap align-items-center gap-2" role="group" aria-labelledby="accent-label">
+                            @foreach (App\Support\Theme::PRESETS as $name => $hex)
+                                <button type="button" class="wk-swatch" style="--wk-swatch: {{ $hex }}"
+                                        title="{{ __($name) }}" aria-label="{{ __($name) }}"
+                                        :class="{ 'active': accent === '{{ $hex }}' }" :aria-pressed="accent === '{{ $hex }}'"
+                                        @click="accent = '{{ $hex }}'"></button>
+                            @endforeach
+                            <input type="color" class="form-control form-control-color" value="{{ $v('theme.accent') }}" x-model="accent"
+                                   title="{{ __('Custom colour') }}" aria-label="{{ __('Custom colour') }}">
+                            <input type="hidden" name="theme__accent" value="{{ $v('theme.accent') }}" :value="accent">
+                        </div>
+                        <div class="form-text">{{ __('Buttons, links and highlights, in light and dark mode. Save to apply.') }}</div>
+                        @error('theme__accent') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="theme__radius" class="form-label">{{ __('Corners') }}</label>
+                            <select id="theme__radius" name="theme__radius" class="form-select @error('theme__radius') is-invalid @enderror">
+                                @foreach (['sharp' => __('Sharp'), 'default' => __('Default'), 'round' => __('Rounded')] as $value => $label)
+                                    <option value="{{ $value }}" @selected($v('theme.radius') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('theme__radius') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="theme__font" class="form-label">{{ __('Font') }}</label>
+                            <select id="theme__font" name="theme__font" class="form-select @error('theme__font') is-invalid @enderror">
+                                @foreach (['system' => __('System'), 'serif' => __('Serif'), 'mono' => __('Monospace')] as $value => $label)
+                                    <option value="{{ $value }}" @selected($v('theme.font') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('theme__font') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                </div></fieldset>
+
                 <fieldset class="card mb-4"><div class="card-body">
                     <legend class="h5">{{ __('Maintenance') }}</legend>
                     <div class="form-check form-switch mb-2">
