@@ -32,9 +32,8 @@
                 <i class="fa-solid fa-key me-2"></i>{{ __('Secrets') }}
             </a>
         @endif
-        <div class="list-group-item text-body-secondary">
+        <a href="{{ route('admin.settings.edit') }}" class="list-group-item list-group-item-action">
             <i class="fa-solid fa-gear me-2"></i>{{ __('Settings') }}
-            <span class="badge text-bg-secondary ms-2">{{ __('coming soon') }}</span>
-        </div>
+        </a>
     </div>
 @endsection

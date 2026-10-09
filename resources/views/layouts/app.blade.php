@@ -121,5 +121,9 @@
         </div>
     </footer>
     @stack('editor-scripts')
+    @if ($js = App\Facades\Settings::get('custom.js'))
+        {{-- Admin-authored (Settings → Custom code); runs for every visitor. --}}
+        <script>{!! str_replace('</', '<\/', $js) !!}</script>
+    @endif
 </body>
 </html>

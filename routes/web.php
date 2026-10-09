@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\LinkController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MediaController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\PagePickerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SecretController;
+use App\Http\Middleware\ApplySettings;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -20,9 +22,8 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// The home page set in Settings, or the welcome page.
+Route::get('/', [PageController::class, 'home'])->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -65,6 +66,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('pages', [AdminPageController::class, 'index'])->name('pages.index');
     Route::post('pages/bulk', [AdminPageController::class, 'bulk'])->name('pages.bulk');
     Route::get('links', [LinkController::class, 'index'])->name('links.index');
+    Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
+    Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
     Route::get('menu', [MenuController::class, 'index'])->name('menu.index');
     Route::post('menu', [MenuController::class, 'store'])->name('menu.store');
     Route::put('menu/order', [MenuController::class, 'order'])->name('menu.order');
@@ -82,6 +85,7 @@ Route::get('/up', HealthController::class)
         EncryptCookies::class,
         AddQueuedCookiesToResponse::class,
         PreventRequestForgery::class,
+        ApplySettings::class,
     ]);
 
 require __DIR__.'/auth.php';

@@ -13,5 +13,20 @@
     })();
 </script>
 
+@hasSection('meta')
+    @yield('meta')
+@else
+    @if ($d = App\Facades\Settings::get('meta.description'))
+        <meta name="description" content="{{ $d }}">
+    @endif
+    @if ($k = App\Facades\Settings::get('meta.keywords'))
+        <meta name="keywords" content="{{ $k }}">
+    @endif
+@endif
+
 @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 @stack('head')
+@if ($css = App\Facades\Settings::get('custom.css'))
+    {{-- Admin-authored (Settings → Custom code); "</" escaped so it can't close the tag. --}}
+    <style>{!! str_replace('</', '<\/', $css) !!}</style>
+@endif

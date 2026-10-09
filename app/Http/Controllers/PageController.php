@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Visibility;
+use App\Facades\Settings;
 use App\Html\Pipeline;
 use App\Html\RenderContext;
 use App\Http\Requests\PageRequest;
@@ -23,6 +24,18 @@ use function Illuminate\Support\defer;
 
 class PageController extends Controller
 {
+    /** `/`: the home page chosen in Settings, when it exists and the visitor may read it. */
+    public function home(Request $request, Pipeline $pipeline, RenderCache $cache): View|RedirectResponse
+    {
+        $page = Page::find(Settings::get('wiki.home_page'));
+
+        if ($page === null || Gate::denies('view', $page)) {
+            return view('welcome');
+        }
+
+        return $this->show($request, $page, $pipeline, $cache);
+    }
+
     public function show(Request $request, Page $page, Pipeline $pipeline, RenderCache $cache): View|RedirectResponse
     {
         if (Gate::denies('view', $page)) {

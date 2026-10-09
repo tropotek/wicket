@@ -2,14 +2,16 @@
 
 @section('title', $page->title.' · '.config('app.name'))
 
-@push('head')
-    @if ($content?->description)
-        <meta name="description" content="{{ $content->description }}">
-    @endif
-    @if ($content?->keywords)
-        <meta name="keywords" content="{{ $content->keywords }}">
-    @endif
-@endpush
+@if ($content?->description || $content?->keywords)
+    @section('meta')
+        @if ($content->description)
+            <meta name="description" content="{{ $content->description }}">
+        @endif
+        @if ($content->keywords)
+            <meta name="keywords" content="{{ $content->keywords }}">
+        @endif
+    @endsection
+@endif
 
 @section('content')
     <article class="wk-page">
