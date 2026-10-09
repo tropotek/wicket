@@ -8,6 +8,9 @@ class ImportContext
     /** @var array<string, array<int, int>> e.g. ['user' => [legacyId => newId]] */
     public array $ids = [];
 
+    /** @var array<string, string> legacy page url → Wicket slug, for every imported page */
+    public array $slugs = [];
+
     /** @var list<string> problems worth showing the operator (skipped rows, renamed users…) */
     public array $warnings = [];
 

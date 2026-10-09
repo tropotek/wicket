@@ -10,7 +10,11 @@ use Illuminate\Support\Facades\DB;
 class Importer
 {
     /** @var list<class-string<Pass>> in dependency order */
-    public const PASSES = [];
+    public const PASSES = [
+        Passes\UsersPass::class,
+        Passes\PagesPass::class,
+        Passes\RevisionsPass::class,
+    ];
 
     /** Wicket tables a forced re-import empties first (children before parents). */
     private const WIPE = ['page_links', 'page_redirects', 'menu_items', 'contents', 'page_locks', 'secrets', 'pages', 'users'];

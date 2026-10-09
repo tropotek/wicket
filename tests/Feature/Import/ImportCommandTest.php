@@ -76,6 +76,6 @@ class ImportCommandTest extends TestCase
         $this->artisan('wicket:import', ['--from' => $this->legacy->dsn(), '--force' => true, '--no-interaction' => true])
             ->expectsOutputToContain('Emptied existing')
             ->assertSuccessful();
-        $this->assertSame(0, User::count(), 'no passes yet, so the wipe leaves nothing');
+        $this->assertSame(['sam'], User::pluck('username')->all(), 'the factory user was wiped');
     }
 }

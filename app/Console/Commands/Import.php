@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Import\ImportContext;
 use App\Import\Importer;
 use App\Import\LegacySource;
+use App\Models\PageLink;
 use Illuminate\Console\Command;
 use InvalidArgumentException;
 use Throwable;
@@ -79,6 +80,7 @@ class Import extends Command
             $this->components->info('Dry run: nothing was changed.');
         } elseif ($report !== []) {
             $this->call('wicket:reindex');
+            $this->components->info("Links: {$counts['links']} in tkwiki, ".PageLink::count().' rebuilt from page content.');
         }
 
         return self::SUCCESS;
