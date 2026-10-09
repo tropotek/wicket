@@ -25,6 +25,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/pages', [PageController::class, 'store'])->name('pages.store');
     Route::get('/pages/{page:slug}/edit', [PageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{page:slug}', [PageController::class, 'update'])->name('pages.update');
+    Route::post('/pages/{page:slug}/lock', [PageController::class, 'heartbeat'])->name('pages.lock');
+    Route::post('/pages/{page:slug}/unlock', [PageController::class, 'unlock'])->name('pages.unlock');
 
     Route::get('/pages/{page:slug}/history', [PageHistoryController::class, 'index'])->name('pages.history');
     Route::get('/pages/{page:slug}/diff', [PageHistoryController::class, 'diff'])->name('pages.diff');

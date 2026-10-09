@@ -11,6 +11,10 @@
         </ol>
     </nav>
 
+    @if (session('status'))
+        <div class="alert alert-info">{{ session('status') }}</div>
+    @endif
+
     <div class="alert {{ $isCurrent ? 'alert-success' : 'alert-warning' }} d-flex flex-wrap align-items-center gap-2">
         <div class="me-auto">
             <i class="fa-solid fa-clock-rotate-left me-1"></i>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Content;
 use App\Models\Page;
+use App\Support\PageLocker;
 use App\Support\RevisionDiff;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -68,9 +69,13 @@ class PageHistoryController extends Controller
         ]);
     }
 
-    public function restore(Request $request, Page $page, Content $content): RedirectResponse
+    public function restore(Request $request, Page $page, Content $content, PageLocker $locker): RedirectResponse
     {
         Gate::authorize('update', $page);
+
+        if ($lock = $locker->heldByOther($page, $request->user())) {
+            return back()->with('status', __(':name is editing this page right now; try again shortly.', ['name' => $lock->user->name]));
+        }
 
         if ($page->latestContent?->is($content)) {
             return redirect()->route('pages.show', $page)->with('status', __('That revision is already current.'));

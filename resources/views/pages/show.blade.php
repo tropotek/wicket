@@ -25,6 +25,11 @@
                 <h1 class="h2 mb-0">{{ $page->title }}</h1>
             @endif
             @can('update', $page)
+                @if ($lock)
+                    <span class="badge text-bg-info" title="{{ __('Lock frees :when', ['when' => $lock->expires_at->diffForHumans()]) }}">
+                        <i class="fa-solid fa-lock me-1"></i>{{ __('Being edited by :name', ['name' => $lock->user->name]) }}
+                    </span>
+                @endif
                 @unless ($page->publish)
                     <span class="badge text-bg-warning">{{ __('Unpublished') }}</span>
                 @endunless

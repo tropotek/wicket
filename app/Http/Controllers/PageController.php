@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Enums\Visibility;
 use App\Http\Requests\PageRequest;
 use App\Models\Page;
+use App\Support\PageLocker;
 use App\Support\ReservedSlugs;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -34,6 +36,7 @@ class PageController extends Controller
         return view('pages.show', [
             'page' => $page,
             'content' => $page->latestContent,
+            'lock' => $request->user() ? app(PageLocker::class)->heldByOther($page, $request->user()) : null,
         ]);
     }
 
@@ -63,18 +66,28 @@ class PageController extends Controller
         return redirect()->route('pages.show', $page)->with('status', __('Page created.'));
     }
 
-    public function edit(Request $request, Page $page): View
+    public function edit(Request $request, Page $page, PageLocker $locker): Response|View
     {
         Gate::authorize('update', $page);
 
+        if (! $locker->acquire($page, $request->user())) {
+            return $this->locked($page, $locker);
+        }
+
         $page->load('latestContent');
 
-        return view('pages.form', $this->formData($request, $page));
+        return view('pages.form', $this->formData($request, $page) + [
+            'heartbeatSeconds' => intdiv($locker->seconds(), 2),
+        ]);
     }
 
-    /** Authorised by PageRequest. */
-    public function update(PageRequest $request, Page $page): RedirectResponse
+    /** Authorised by PageRequest. Needs the edit lock, or a free page. */
+    public function update(PageRequest $request, Page $page, PageLocker $locker): Response|RedirectResponse
     {
+        if (! $locker->acquire($page, $request->user())) {
+            return $this->locked($page, $locker);
+        }
+
         DB::transaction(function () use ($request, $page) {
             $page->fill($this->pageAttributes($request));
             $page->slug = $request->validated('slug') ?: $page->slug;
@@ -91,7 +104,36 @@ class PageController extends Controller
             }
         });
 
+        $locker->release($page, $request->user());
+
         return redirect()->route('pages.show', $page)->with('status', __('Page saved.'));
+    }
+
+    /** Editor heartbeat: keeps the lock alive, or reports that it was lost. */
+    public function heartbeat(Request $request, Page $page, PageLocker $locker): Response
+    {
+        Gate::authorize('update', $page);
+
+        if ($locker->acquire($page, $request->user())) {
+            return response('');
+        }
+
+        return response()->view('pages._lock-lost', ['lock' => $locker->holder($page)]);
+    }
+
+    /** Cancel editing: release the lock and go back to the page. */
+    public function unlock(Request $request, Page $page, PageLocker $locker): RedirectResponse
+    {
+        Gate::authorize('update', $page);
+
+        $locker->release($page, $request->user());
+
+        return redirect()->route('pages.show', $page);
+    }
+
+    private function locked(Page $page, PageLocker $locker): Response
+    {
+        return response()->view('pages.locked', ['page' => $page, 'lock' => $locker->holder($page)], 423);
     }
 
     /** @return array<string, mixed> */

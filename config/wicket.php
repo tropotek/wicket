@@ -12,6 +12,12 @@ return [
     | Failed logins allowed per account (or unknown identifier) + IP before
     | lockout, and how long the lockout lasts.
     */
+    /*
+    | How long a page edit lock lasts without a heartbeat. The editor refreshes
+    | it every half-lifetime while open.
+    */
+    'page_lock_seconds' => (int) env('WICKET_PAGE_LOCK_SECONDS', 120),
+
     'login' => [
         'max_attempts' => (int) env('WICKET_LOGIN_MAX_ATTEMPTS', 5),
         'lockout_minutes' => (int) env('WICKET_LOGIN_LOCKOUT_MINUTES', 15),

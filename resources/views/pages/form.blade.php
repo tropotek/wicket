@@ -26,11 +26,24 @@
             <h1 class="h3 mb-0 me-auto">
                 <i class="fa-solid {{ $editing ? 'fa-pen-to-square' : 'fa-file-circle-plus' }} me-2"></i>{{ $editing ? __('Edit page') : __('New page') }}
             </h1>
-            <a href="{{ $editing ? route('pages.show', $page) : url()->previous(route('home')) }}" class="btn btn-outline-secondary">{{ __('Cancel') }}</a>
+            @if ($editing)
+                {{-- Submits #unlock-form (below): releases the edit lock --}}
+                <button type="submit" form="unlock-form" class="btn btn-outline-secondary" formnovalidate>{{ __('Cancel') }}</button>
+            @else
+                <a href="{{ url()->previous(route('home')) }}" class="btn btn-outline-secondary">{{ __('Cancel') }}</a>
+            @endif
             <button type="submit" class="btn btn-primary">
                 <i class="fa-solid fa-floppy-disk me-1"></i>{{ __('Save') }}
             </button>
         </div>
+
+        @if ($editing)
+            {{-- Heartbeat: keeps the edit lock; shows a warning here if it was lost --}}
+            <div id="lock-status"
+                 hx-post="{{ route('pages.lock', $page) }}"
+                 hx-trigger="every {{ $heartbeatSeconds }}s"
+                 hx-swap="innerHTML"></div>
+        @endif
 
         <div class="row g-4">
             <div class="col-lg-8">
@@ -135,4 +148,10 @@
             </div>
         </div>
     </form>
+
+    @if ($editing)
+        <form id="unlock-form" method="POST" action="{{ route('pages.unlock', $page) }}" class="d-none">
+            @csrf
+        </form>
+    @endif
 @endsection
