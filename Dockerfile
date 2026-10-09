@@ -68,6 +68,9 @@ RUN apk add --no-cache su-exec \
  && addgroup -g 1000 app && adduser -D -u 1000 -G app app
 
 COPY --from=vendor --chown=app:app /app /app
+# Release builds stamp their version (shown on /up); dev builds keep version.md as committed.
+ARG APP_VERSION=
+RUN if [ -n "$APP_VERSION" ]; then echo "${APP_VERSION#v}" > /app/version.md; fi
 COPY --from=assets --chown=app:app /app/public/build /app/public/build
 
 # Persistent state lives in /app/data (one volume): db/, media/, private/.
