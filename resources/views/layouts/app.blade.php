@@ -116,7 +116,12 @@
 
     <footer class="wicket-footer border-top py-3">
         <div class="container d-flex justify-content-between">
-            <span>{{ config('app.name') }}</span>
+            <span>
+                {{ config('app.name') }}
+                @if (App\Facades\Settings::get('wiki.contact'))
+                    · <a href="{{ route('contact') }}" class="link-secondary">{{ __('Contact') }}</a>
+                @endif
+            </span>
             <span>v{{ config('app.version') }}</span>
         </div>
     </footer>

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PageController;
@@ -76,6 +77,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/contact', [ContactController::class, 'create'])->name('contact');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/up', HealthController::class)
     ->name('health')
