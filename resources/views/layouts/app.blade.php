@@ -26,6 +26,19 @@
             <a class="navbar-brand fw-semibold" href="{{ url('/') }}">
                 {{ config('app.name') }}
             </a>
+            @if ($menu->isNotEmpty())
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-menu"
+                        aria-controls="main-menu" aria-expanded="false" aria-label="{{ __('Toggle menu') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse order-last order-md-0" id="main-menu">
+                    <ul class="navbar-nav">
+                        @foreach ($menu as $item)
+                            @include('menu._item', ['item' => $item, 'level' => 0])
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="ms-auto d-flex align-items-center gap-2"
                  x-data="{
                      theme: document.documentElement.dataset.bsTheme,

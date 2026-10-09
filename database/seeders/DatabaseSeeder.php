@@ -34,6 +34,6 @@ class DatabaseSeeder extends Seeder
             'email' => 'member@example.com',
         ]);
 
-        $this->call(DevPageSeeder::class);
+        $this->call([DevPageSeeder::class, DevMenuSeeder::class]);
     }
 }
