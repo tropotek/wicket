@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PageController;
@@ -39,6 +40,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::view('/', 'admin.index')->name('index');
     Route::resource('users', UserController::class)->except(['show', 'destroy']);
+    Route::get('pages', [AdminPageController::class, 'index'])->name('pages.index');
+    Route::post('pages/bulk', [AdminPageController::class, 'bulk'])->name('pages.bulk');
 });
 
 Route::get('/up', HealthController::class)

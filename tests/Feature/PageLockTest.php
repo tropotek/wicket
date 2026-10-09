@@ -186,7 +186,7 @@ class PageLockTest extends TestCase
         $this->assertSame(0, PageLock::count());
 
         $locker->acquire($this->page, $this->bob);
-        $this->page->delete();
+        $this->page->forceDelete();
         $this->assertSame(0, PageLock::count());
     }
 }

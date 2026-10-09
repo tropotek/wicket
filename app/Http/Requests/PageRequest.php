@@ -37,13 +37,19 @@ class PageRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'slug' => $slugRules ?? [
-                'nullable', 'string', 'max:255', 'regex:'.self::SLUG_PATTERN,
-                Rule::unique(Page::class)->ignore($this->route('page')?->id),
+                'bail', 'nullable', 'string', 'max:255', 'regex:'.self::SLUG_PATTERN,
                 function (string $attribute, mixed $value, Closure $fail) {
                     if (app(ReservedSlugs::class)->contains($value)) {
                         $fail(__('":slug" is used by the site itself. Pick another.', ['slug' => $value]));
                     }
                 },
+                // Runs before the generic unique rule so the trash case gets a useful message.
+                function (string $attribute, mixed $value, Closure $fail) {
+                    if (Page::onlyTrashed()->where('slug', $value)->exists()) {
+                        $fail(__('A page in the trash uses this slug. Restore or permanently delete it first.'));
+                    }
+                },
+                Rule::unique(Page::class)->ignore($this->route('page')?->id),
             ],
             'category' => ['nullable', 'string', 'max:128'],
             'visibility' => ['required', Rule::enum(Visibility::class)],

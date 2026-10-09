@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * author_id and views are deliberately not fillable: set them explicitly.
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Page extends Model
 {
     /** @use HasFactory<PageFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /** Mirrors the column defaults so a freshly created model has them without a refresh. */
     protected $attributes = [

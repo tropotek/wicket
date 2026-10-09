@@ -168,7 +168,7 @@ class PageController extends Controller
         $slug = $base;
         $n = 1;
 
-        while ($reserved->contains($slug) || Page::where('slug', $slug)->exists()) {
+        while ($reserved->contains($slug) || Page::withTrashed()->where('slug', $slug)->exists()) {
             $slug = $base.'-'.++$n;
         }
 

@@ -67,11 +67,11 @@ class PageSchemaTest extends TestCase
         ));
     }
 
-    public function test_deleting_page_cascades_revisions(): void
+    public function test_force_deleting_page_cascades_revisions(): void
     {
         $page = Page::factory()->withContent(2)->create();
 
-        $page->delete();
+        $page->forceDelete();
 
         $this->assertDatabaseCount('contents', 0);
     }

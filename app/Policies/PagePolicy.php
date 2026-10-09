@@ -54,4 +54,16 @@ class PagePolicy
     {
         return $user->isAdmin() || ($user->hasRole(Role::Editor) && $page->author_id === $user->id);
     }
+
+    /** Bring a page back from the trash. */
+    public function restore(User $user, Page $page): bool
+    {
+        return $user->isAdmin();
+    }
+
+    /** Permanently delete a trashed page and its revisions. */
+    public function forceDelete(User $user, Page $page): bool
+    {
+        return $user->isAdmin();
+    }
 }

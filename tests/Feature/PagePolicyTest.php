@@ -167,4 +167,16 @@ class PagePolicyTest extends TestCase
             $this->assertEquals($expected, $actual, $label);
         }
     }
+
+    public function test_restore_and_force_delete_are_admin_only(): void
+    {
+        $page = Page::factory()->create();
+        $author = $page->author;
+
+        foreach (['restore', 'forceDelete'] as $ability) {
+            $this->assertTrue($this->can(User::factory()->admin()->create(), $ability, $page), $ability);
+            $this->assertFalse($this->can($author, $ability, $page), $ability);
+            $this->assertFalse($this->can(User::factory()->editor()->create(), $ability, $page), $ability);
+        }
+    }
 }
