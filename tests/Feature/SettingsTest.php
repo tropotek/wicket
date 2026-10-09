@@ -84,10 +84,30 @@ class SettingsTest extends TestCase
 
         $home->update(['visibility' => Visibility::Members]);
         $this->get('/')->assertOk()->assertSee('waiting for its first page');
-        $this->actingAs(User::factory()->create())->get('/')->assertSee('Start here');
+        $this->actingAs(User::factory()->create())->get('/')->assertSee('waiting for its first page');
 
         $home->delete();
         $this->get('/')->assertOk()->assertSee('waiting for its first page');
+    }
+
+    public function test_only_public_pages_can_be_the_home_page(): void
+    {
+        $public = Page::factory()->create(['title' => 'Open Page', 'visibility' => Visibility::Public]);
+        $members = Page::factory()->create(['title' => 'Members Page', 'visibility' => Visibility::Members]);
+        $trashed = Page::factory()->create(['title' => 'Binned Page', 'visibility' => Visibility::Public]);
+        $trashed->delete();
+
+        $this->actingAs($this->admin)->get(route('admin.settings.edit'))
+            ->assertSee('Open Page')->assertDontSee(['Members Page', 'Binned Page']);
+
+        foreach ([$members, $trashed] as $page) {
+            $this->put(route('admin.settings.update'), $this->form(['wiki__home_page' => (string) $page->id]))
+                ->assertSessionHasErrors('wiki__home_page');
+        }
+
+        $this->put(route('admin.settings.update'), $this->form(['wiki__home_page' => (string) $public->id]))
+            ->assertSessionHasNoErrors();
+        $this->assertSame($public->id, Settings::get('wiki.home_page'));
     }
 
     public function test_maintenance_mode(): void

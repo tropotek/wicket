@@ -29,12 +29,12 @@ class PageController extends Controller
     /** Backlinks listed under a page before "and more". */
     private const BACKLINKS = 20;
 
-    /** `/`: the home page chosen in Settings, when it exists and the visitor may read it. */
+    /** `/`: the home page chosen in Settings, while it exists and is public. */
     public function home(Request $request, Pipeline $pipeline, RenderCache $cache): View|RedirectResponse
     {
         $page = Page::find(Settings::get('wiki.home_page'));
 
-        if ($page === null || Gate::denies('view', $page)) {
+        if ($page?->visibility !== Visibility::Public) {
             return view('welcome');
         }
 

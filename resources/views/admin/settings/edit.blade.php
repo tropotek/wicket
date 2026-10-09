@@ -52,11 +52,11 @@
                             <option value="">{{ __('Welcome page (none)') }}</option>
                             @foreach ($pages as $page)
                                 <option value="{{ $page->id }}" @selected((string) $v('wiki.home_page') === (string) $page->id)>
-                                    {{ $page->title }} (/{{ $page->slug }}{{ $page->visibility->value !== 'public' ? ', '.$page->visibility->label() : '' }})
+                                    {{ $page->title }} (/{{ $page->slug }})
                                 </option>
                             @endforeach
                         </select>
-                        <div class="form-text">{{ __('Shown at /. Visitors who can\'t read it get the welcome page.') }}</div>
+                        <div class="form-text">{{ __('Shown at /. Only public pages can be the home page.') }}</div>
                         @error('wiki__home_page') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                     @foreach (['wiki.registration' => __('Anyone can register an account'), 'wiki.secrets' => __('Secrets module (stored credentials in pages)'), 'wiki.backlinks' => __('Show "Linked from" under each page'), 'wiki.contact' => __('Contact form (mails the site email)')] as $key => $label)

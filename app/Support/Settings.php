@@ -2,8 +2,10 @@
 
 namespace App\Support;
 
+use App\Enums\Visibility;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 /**
  * Admin-editable settings. Each key's type, default and rules are defined here; stored values
@@ -31,7 +33,8 @@ class Settings
         return [
             'site.name' => ['type' => 'string', 'rules' => ['required', 'string', 'max:100']],
             'site.email' => ['type' => 'string', 'rules' => ['nullable', 'email', 'max:255']],
-            'wiki.home_page' => ['type' => 'int', 'rules' => ['nullable', 'integer', 'exists:pages,id']],
+            'wiki.home_page' => ['type' => 'int', 'rules' => ['nullable', 'integer',
+                Rule::exists('pages', 'id')->where('visibility', Visibility::Public->value)->whereNull('deleted_at')]],
             'wiki.registration' => ['type' => 'bool', 'rules' => ['boolean']],
             'wiki.secrets' => ['type' => 'bool', 'rules' => ['boolean']],
             'wiki.backlinks' => ['type' => 'bool', 'rules' => ['boolean']],

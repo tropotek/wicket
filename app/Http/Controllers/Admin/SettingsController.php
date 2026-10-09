@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Visibility;
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
@@ -17,7 +18,7 @@ class SettingsController extends Controller
     {
         return view('admin.settings.edit', [
             'settings' => Settings::all(),
-            'pages' => Page::orderBy('title')->get(['id', 'title', 'slug', 'visibility']),
+            'pages' => Page::where('visibility', Visibility::Public)->orderBy('title')->get(['id', 'title', 'slug']),
         ]);
     }
 
