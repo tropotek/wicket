@@ -29,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('admin', fn (User $user) => $user->isAdmin());
+        // The media browser: whoever can write pages can manage the files they use.
+        Gate::define('media', fn (User $user) => $user->can('create', Page::class));
 
         Paginator::useBootstrapFive();
 

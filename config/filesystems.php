@@ -52,6 +52,7 @@ return [
             'driver' => 'local',
             'root' => base_path('data/media'),
             'url' => '/data/media',
+            'links' => 'skip', // never list or follow symlinks out of the media root
             'throw' => true,
             'report' => false,
         ],

@@ -33,6 +33,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/pages/{page:slug}/unlock', [PageController::class, 'unlock'])->name('pages.unlock');
 
     Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
+    Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+    Route::post('/media/files', [MediaController::class, 'files'])->name('media.files');
+    Route::post('/media/folders', [MediaController::class, 'folder'])->name('media.folders');
+    Route::patch('/media/rename', [MediaController::class, 'rename'])->name('media.rename');
+    Route::delete('/media', [MediaController::class, 'destroy'])->name('media.destroy');
+    Route::get('/media/thumb', [MediaController::class, 'thumb'])->name('media.thumb');
 
     Route::get('/pages/{page:slug}/history', [PageHistoryController::class, 'index'])->name('pages.history');
     Route::get('/pages/{page:slug}/diff', [PageHistoryController::class, 'diff'])->name('pages.diff');

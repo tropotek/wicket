@@ -23,6 +23,16 @@ return [
     */
     'upload_max_kb' => (int) env('WICKET_UPLOAD_MAX_KB', 10240),
 
+    /*
+    | File types the media browser accepts. Media is served as static files, so keep
+    | anything a browser or server might execute (svg, html, js, php…) off this list.
+    */
+    'media_extensions' => [
+        'jpg', 'jpeg', 'png', 'gif', 'webp',
+        'pdf', 'txt', 'csv', 'zip',
+        'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp',
+    ],
+
     'login' => [
         'max_attempts' => (int) env('WICKET_LOGIN_MAX_ATTEMPTS', 5),
         'lockout_minutes' => (int) env('WICKET_LOGIN_LOCKOUT_MINUTES', 15),

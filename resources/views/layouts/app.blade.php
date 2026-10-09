@@ -1,22 +1,7 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('app.name'))</title>
-
-    <script>
-        (() => {
-            const stored = localStorage.getItem('wicket.theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = stored ?? (prefersDark ? 'dark' : 'light');
-            document.documentElement.dataset.bsTheme = theme;
-        })();
-    </script>
-
-    @vite(['resources/scss/app.scss', 'resources/js/app.js'])
-    @stack('head')
+    @include('layouts._head')
 </head>
 <body class="d-flex flex-column min-vh-100"
       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'>
@@ -73,6 +58,13 @@
                                     <i class="fa-solid fa-id-card me-1"></i>{{ __('Profile') }}
                                 </a>
                             </li>
+                            @can('media')
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('media.index') }}">
+                                        <i class="fa-solid fa-photo-film me-1"></i>{{ __('Media') }}
+                                    </a>
+                                </li>
+                            @endcan
                             @can('admin')
                                 <li>
                                     <a class="dropdown-item" href="{{ route('admin.index') }}">

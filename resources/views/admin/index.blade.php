@@ -17,6 +17,9 @@
         <a href="{{ route('admin.menu.index') }}" class="list-group-item list-group-item-action">
             <i class="fa-solid fa-bars me-2"></i>{{ __('Menu') }}
         </a>
+        <a href="{{ route('media.index') }}" class="list-group-item list-group-item-action">
+            <i class="fa-solid fa-photo-film me-2"></i>{{ __('Media') }}
+        </a>
         <div class="list-group-item text-body-secondary">
             <i class="fa-solid fa-gear me-2"></i>{{ __('Settings') }}
             <span class="badge text-bg-secondary ms-2">{{ __('coming soon') }}</span>
