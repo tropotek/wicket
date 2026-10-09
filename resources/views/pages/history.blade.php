@@ -10,10 +10,18 @@
         </ol>
     </nav>
 
-    <h1 class="h3 mb-4"><i class="fa-solid fa-clock-rotate-left me-2"></i>{{ __('History') }}</h1>
-
     <form method="GET" action="{{ route('pages.diff', $page) }}"
           x-data="{ from: @js($revisions->skip(1)->first()?->id), to: @js($currentId) }">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
+            <h1 class="h3 mb-0 me-auto"><i class="fa-solid fa-clock-rotate-left me-2"></i>{{ __('History') }}</h1>
+            @if ($revisions->count() > 1)
+                <button type="submit" class="btn btn-primary" :disabled="from === to"
+                        title="{{ __('Compare the revisions picked in From and To') }}">
+                    <i class="fa-solid fa-code-compare me-1"></i>{{ __('Compare selected') }}
+                </button>
+            @endif
+        </div>
+
         <div class="table-responsive">
             <table class="table table-hover align-middle wk-history">
                 <thead>
@@ -63,11 +71,5 @@
                 </tbody>
             </table>
         </div>
-
-        @if ($revisions->count() > 1)
-            <button type="submit" class="btn btn-primary" :disabled="from === to">
-                <i class="fa-solid fa-code-compare me-1"></i>{{ __('Compare selected') }}
-            </button>
-        @endif
     </form>
 @endsection
