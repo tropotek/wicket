@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PageHistoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -24,6 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/pages', [PageController::class, 'store'])->name('pages.store');
     Route::get('/pages/{page:slug}/edit', [PageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{page:slug}', [PageController::class, 'update'])->name('pages.update');
+
+    Route::get('/pages/{page:slug}/history', [PageHistoryController::class, 'index'])->name('pages.history');
+    Route::get('/pages/{page:slug}/diff', [PageHistoryController::class, 'diff'])->name('pages.diff');
+    Route::scopeBindings()->group(function () {
+        Route::get('/pages/{page:slug}/revisions/{content}', [PageHistoryController::class, 'show'])->name('pages.revision');
+        Route::post('/pages/{page:slug}/revisions/{content}/restore', [PageHistoryController::class, 'restore'])->name('pages.restore');
+    });
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

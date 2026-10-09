@@ -28,9 +28,14 @@
                 @unless ($page->publish)
                     <span class="badge text-bg-warning">{{ __('Unpublished') }}</span>
                 @endunless
-                <a href="{{ route('pages.edit', $page) }}" class="btn btn-sm btn-outline-secondary ms-auto">
-                    <i class="fa-solid fa-pen me-1"></i>{{ __('Edit') }}
-                </a>
+                <div class="btn-group btn-group-sm ms-auto">
+                    <a href="{{ route('pages.history', $page) }}" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-clock-rotate-left me-1"></i>{{ __('History') }}
+                    </a>
+                    <a href="{{ route('pages.edit', $page) }}" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-pen me-1"></i>{{ __('Edit') }}
+                    </a>
+                </div>
             @endcan
         </header>
 
