@@ -9,7 +9,8 @@
 /.cursor/
 /.idea/
 /_notes/
-/data/
+/data/*
+!/data/.gitkeep
 /database/*.sqlite
 /database/*.sqlite-journal
 /.nova
@@ -29,3 +30,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+**/caddy
+frankenphp
+frankenphp-worker.php
