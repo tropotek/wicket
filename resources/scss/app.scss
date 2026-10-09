@@ -27,6 +27,14 @@ $font-family-sans-serif:
 
 [x-cloak] { display: none !important; }
 
+// Set for a frame while the light/dark toggle switches themes.
+.wk-no-transition,
+.wk-no-transition *,
+.wk-no-transition *::before,
+.wk-no-transition *::after {
+    transition: none !important;
+}
+
 // Navbar: menu and tools are plain links with a soft hover, no button chrome.
 .navbar .nav-link {
     border-radius: var(--bs-border-radius);

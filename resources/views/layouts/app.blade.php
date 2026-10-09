@@ -28,9 +28,14 @@
                  x-data="{
                      theme: document.documentElement.dataset.bsTheme,
                      toggle() {
+                         // Switch in one frame: without this, form borders fade over from the old theme's colour.
+                         const root = document.documentElement;
+                         root.classList.add('wk-no-transition');
                          this.theme = this.theme === 'dark' ? 'light' : 'dark';
-                         document.documentElement.dataset.bsTheme = this.theme;
+                         root.dataset.bsTheme = this.theme;
                          localStorage.setItem('wicket.theme', this.theme);
+                         getComputedStyle(root).color;
+                         requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('wk-no-transition')));
                      },
                  }">
                 @unless (request()->routeIs('search'))
