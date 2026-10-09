@@ -42,7 +42,7 @@
             <h1 class="h2 mb-3">{{ $page->title }}</h1>
         @endif
         <div class="wk-content">
-            {!! $content->html !!}
+            {!! $html !!}
         </div>
     </article>
 @endsection

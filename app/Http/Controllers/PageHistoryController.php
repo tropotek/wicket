@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Html\Pipeline;
+use App\Html\RenderContext;
 use App\Models\Content;
 use App\Models\Page;
 use App\Support\PageLocker;
@@ -55,7 +57,7 @@ class PageHistoryController extends Controller
         ]);
     }
 
-    public function show(Page $page, Content $content): View
+    public function show(Request $request, Page $page, Content $content, Pipeline $pipeline): View
     {
         Gate::authorize('update', $page);
 
@@ -64,6 +66,7 @@ class PageHistoryController extends Controller
         return view('pages.revision', [
             'page' => $page,
             'content' => $content->load('user'),
+            'html' => $pipeline->render($content->html, new RenderContext($page, $request->user())),
             'number' => $ids->search($content->id) + 1,
             'isCurrent' => $ids->last() === $content->id,
         ]);

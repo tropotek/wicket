@@ -2,6 +2,7 @@
 
 use App\Html\Passes\ExternalLinks;
 use App\Html\Passes\InternalLinks;
+use App\Html\Passes\SecretPlaceholders;
 
 return [
 
@@ -48,6 +49,7 @@ return [
     'html_passes' => [
         ExternalLinks::class,
         InternalLinks::class,
+        SecretPlaceholders::class,
     ],
 
     'login' => [
