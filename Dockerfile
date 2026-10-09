@@ -9,7 +9,7 @@ ARG FRANKENPHP=1.13-php8.4
 ############################ dev ############################
 FROM dunglas/frankenphp:${FRANKENPHP}-bookworm AS dev
 
-RUN install-php-extensions pdo_sqlite intl zip pcntl gd
+RUN install-php-extensions pdo_sqlite pdo_mysql intl zip pcntl gd
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -33,7 +33,7 @@ WORKDIR /app
 ############################ prod: shared runtime base ############################
 FROM dunglas/frankenphp:${FRANKENPHP}-alpine AS base
 
-RUN install-php-extensions pdo_sqlite intl zip pcntl gd opcache
+RUN install-php-extensions pdo_sqlite pdo_mysql intl zip pcntl gd opcache
 
 WORKDIR /app
 
