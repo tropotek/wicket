@@ -89,7 +89,7 @@
                         <label for="logo" class="form-label">{{ __('Logo') }}</label>
                         @if ($settings['theme.logo'])
                             <div class="d-flex align-items-center gap-3 mb-2">
-                                <img src="{{ app(App\Support\MediaStore::class)->url($settings['theme.logo']) }}" class="wk-logo border rounded p-1" alt="{{ __('Current logo') }}">
+                                <img src="{{ app(App\Support\PublicData::class)->url($settings['theme.logo']) }}" class="wk-logo border rounded p-1" alt="{{ __('Current logo') }}">
                                 <div class="form-check">
                                     <input id="logo_remove" type="checkbox" name="logo_remove" value="1" class="form-check-input">
                                     <label for="logo_remove" class="form-check-label">{{ __('Remove logo') }}</label>

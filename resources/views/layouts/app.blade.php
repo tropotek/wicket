@@ -11,7 +11,7 @@
             <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="{{ url('/') }}">
                 @if ($logo = App\Facades\Settings::get('theme.logo'))
                     @php($logoText = App\Facades\Settings::get('theme.logo_text'))
-                    <img src="{{ app(App\Support\MediaStore::class)->url($logo) }}" class="wk-logo" alt="{{ $logoText ? '' : config('app.name') }}">
+                    <img src="{{ app(App\Support\PublicData::class)->url($logo) }}" class="wk-logo" alt="{{ $logoText ? '' : config('app.name') }}">
                     @if ($logoText) {{ config('app.name') }} @endif
                 @else
                     {{ config('app.name') }}
