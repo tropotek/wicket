@@ -39,6 +39,7 @@ services:
       # Everything that must survive an upgrade, in one directory:
       #   data/db/wiki.sqlite       the database
       #   data/media/               uploads and the file manager's files
+      #   data/public/              site logo and profile photos
       #   data/private/.app-key     generated APP_KEY (unless APP_KEY is set in .env)
       #   data/backups/             wicket:backup snapshots
       #   data/logs/                daily logs, kept LOG_DAILY_DAYS days (also in `logs wicket`)

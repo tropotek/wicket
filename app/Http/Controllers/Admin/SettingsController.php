@@ -6,17 +6,17 @@ use App\Enums\Visibility;
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Support\PublicData;
 use App\Support\Settings as SettingsStore;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class SettingsController extends Controller
 {
-    private const LOGO_DIR = '.site';
+    private const LOGO_DIR = 'site';
 
     public function edit(): View
     {
@@ -59,12 +59,12 @@ class SettingsController extends Controller
     }
 
     /**
-     * Store a new logo (or none) in the media disk's hidden .site/ folder and delete the old one.
+     * Store a new logo (or none) in data/public/site/ and delete the old one.
      * The content hash in the name busts browser caches when the logo changes.
      */
     private function replaceLogo(?string $old, ?UploadedFile $file): string
     {
-        $disk = Storage::disk('media');
+        $disk = app(PublicData::class)->disk();
         $new = '';
 
         if ($file) {

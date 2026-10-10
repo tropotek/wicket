@@ -4,7 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Role;
-use App\Support\MediaStore;
+use App\Support\PublicData;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -51,7 +51,7 @@ class User extends Authenticatable
     /** Public URL of the profile photo, or null to show initials. */
     public function avatarUrl(): ?string
     {
-        return $this->avatar ? app(MediaStore::class)->url($this->avatar) : null;
+        return $this->avatar ? app(PublicData::class)->url($this->avatar) : null;
     }
 
     /** Up to two initials from the name, for the avatar circle when there's no photo. */

@@ -18,12 +18,15 @@ class SiteLogoTest extends TestCase
 
     private Filesystem $disk;
 
+    private Filesystem $media;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         config(['cache.default' => 'array']);
-        $this->disk = Storage::fake('media');
+        $this->disk = Storage::fake('public_data');
+        $this->media = Storage::fake('media');
         $this->admin = User::factory()->admin()->create();
     }
 
@@ -56,13 +59,14 @@ class SiteLogoTest extends TestCase
         $this->save(['logo' => UploadedFile::fake()->image('Logo.PNG', 120, 40)])->assertSessionHasNoErrors();
 
         $path = Settings::get('theme.logo');
-        $this->assertMatchesRegularExpression('#^\.site/logo-[0-9a-f]{12}\.png$#', $path);
+        $this->assertMatchesRegularExpression('#^site/logo-[0-9a-f]{12}\.png$#', $path);
         $this->disk->assertExists($path);
+        $this->assertSame([], $this->media->allFiles(), 'nothing lands in the media library');
 
         $this->get('/')->assertOk()
-            ->assertSee('<img src="/data/media/'.$path.'" class="wk-logo" alt="">', false)
+            ->assertSee('<img src="/data/public/'.$path.'" class="wk-logo" alt="">', false)
             ->assertSeeInOrder(['wk-logo', 'Team Wiki']);
-        $this->actingAs($this->admin)->get('/admin/settings')->assertSee('/data/media/'.$path, false);
+        $this->actingAs($this->admin)->get('/admin/settings')->assertSee('/data/public/'.$path, false);
     }
 
     public function test_replacing_deletes_the_old_file_and_saving_other_settings_keeps_it(): void

@@ -57,6 +57,17 @@ return [
             'report' => false,
         ],
 
+        // Site-managed images (logo, profile photos), kept apart from users' media. Served as
+        // static files via the public/data/public link.
+        'public_data' => [
+            'driver' => 'local',
+            'root' => base_path('data/public'),
+            'url' => '/data/public',
+            'links' => 'skip',
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -86,6 +97,7 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
         public_path('data/media') => base_path('data/media'),
+        public_path('data/public') => base_path('data/public'),
     ],
 
 ];

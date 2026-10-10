@@ -15,11 +15,14 @@ class UserAvatarTest extends TestCase
 
     private Filesystem $disk;
 
+    private Filesystem $media;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->disk = Storage::fake('media');
+        $this->disk = Storage::fake('public_data');
+        $this->media = Storage::fake('media');
     }
 
     /** A solid-colour PNG; distinct colours give distinct stored files. */
@@ -47,13 +50,14 @@ class UserAvatarTest extends TestCase
             ->assertSessionHasNoErrors()->assertRedirect('/profile');
 
         $path = $user->refresh()->avatar;
-        $this->assertMatchesRegularExpression('#^\.avatars/[0-9a-f]{16}\.webp$#', $path);
+        $this->assertMatchesRegularExpression('#^avatars/[0-9a-f]{16}\.webp$#', $path);
         $this->disk->assertExists($path);
+        $this->assertSame([], $this->media->allFiles(), 'nothing lands in the media library');
         $this->assertSame([256, 256], array_slice(getimagesize($this->disk->path($path)), 0, 2));
         $this->assertSame('image/webp', getimagesize($this->disk->path($path))['mime']);
 
         $this->actingAs($user)->get('/profile')
-            ->assertSee('<img src="/data/media/'.$path.'" class="wk-avatar" alt="">', false)
+            ->assertSee('<img src="/data/public/'.$path.'" class="wk-avatar" alt="">', false)
             ->assertDontSee('<span class="wk-avatar" aria-hidden="true">AL</span>', false);
     }
 
@@ -106,7 +110,7 @@ class UserAvatarTest extends TestCase
         $path = $user->refresh()->avatar;
 
         $this->actingAs($admin)->get(route('admin.users.edit', $user))->assertOk()
-            ->assertSee('/data/media/'.$path, false)
+            ->assertSee('/data/public/'.$path, false)
             ->assertSee('name="avatar_remove"', false);
 
         $this->actingAs($admin)->put(route('admin.users.update', $user), [

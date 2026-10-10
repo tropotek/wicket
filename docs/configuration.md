@@ -25,6 +25,27 @@ maintenance mode) are edited under **Admin → Settings** instead.
 
 To rotate `APP_KEY`, put the old key in `APP_PREVIOUS_KEYS`, or stored secrets become unreadable.
 
+## Appearance
+
+Under **Admin → Settings → Appearance**:
+
+- **Accent colour**: buttons, links and highlights, in light and dark mode. The browser-tab icon
+  (favicon) is drawn in the same colour. Browsers that can't show an SVG favicon fall back to a
+  fixed blue `favicon.ico`.
+- **Default mode**: light, dark or the visitor's system setting, until a visitor picks their own.
+- **Corners** and **Font**.
+- **Logo**: a PNG, JPG, GIF or WebP up to 1 MB, shown 32 px tall to the left of the site name in
+  the navbar. Turn off **Show the site name beside the logo** when the logo already contains the
+  name. SVG isn't accepted: uploads are served as files from the site, where an SVG could run
+  script.
+
+Users add a **profile photo** on their Profile page (up to 4 MB). It is cropped to a square,
+re-saved as WebP with camera metadata such as location removed, and replaces their initials in
+the navbar. Admins see it on the user's edit page and can remove it.
+
+The logo and profile photos are kept in `data/public/`, apart from the media library in
+`data/media/`. Backups of `data/` include them.
+
 ## Logs
 
 The container logs to stderr, shown by `docker compose -f docker-compose-live.yml logs wicket`,

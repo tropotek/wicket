@@ -49,7 +49,7 @@ class Settings
             'theme.radius' => ['type' => 'string', 'rules' => ['required', Rule::in(Theme::RADII)]],
             'theme.font' => ['type' => 'string', 'rules' => ['required', Rule::in(Theme::FONTS)]],
             'theme.mode' => ['type' => 'string', 'rules' => ['required', Rule::in(Theme::MODES)]],
-            // Media-disk path of the uploaded logo; set by the upload, never posted as a field.
+            // public_data-disk path of the uploaded logo; set by the upload, never posted as a field.
             'theme.logo' => ['type' => 'string', 'rules' => ['nullable', 'string']],
             'theme.logo_text' => ['type' => 'bool', 'rules' => ['boolean']],
         ];

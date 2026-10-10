@@ -1,5 +1,5 @@
 # Octane's FrankenPHP Caddyfile (vendor/laravel/octane/src/Commands/stubs/Caddyfile) plus a
-# static-only /data/media block. Re-sync with the stub when upgrading Octane.
+# static-only /data/media and /data/public blocks. Re-sync with the stub when upgrading Octane.
 {
 	{$CADDY_GLOBAL_OPTIONS}
 
@@ -41,6 +41,13 @@
 		# Wiki media: static files only, never handed to PHP (an uploaded .php is served, not run).
 		@media path /data/media/*
 		handle @media {
+			header X-Content-Type-Options nosniff
+			file_server
+		}
+
+		# Site logo and profile photos (data/public): static files only, like media.
+		@public path /data/public/*
+		handle @public {
 			header X-Content-Type-Options nosniff
 			file_server
 		}

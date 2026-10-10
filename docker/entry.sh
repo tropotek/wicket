@@ -7,11 +7,13 @@ cd /app
 as_app() { su-exec app "$@"; }
 
 DATA=/app/data
-mkdir -p "$DATA/db" "$DATA/media" "$DATA/private" "$DATA/logs"
+mkdir -p "$DATA/db" "$DATA/media" "$DATA/public" "$DATA/private" "$DATA/logs"
 # Bind mounts arrive owned by the host user; fix once (skip the walk when already right).
 if [ "$(stat -c %U "$DATA")" != app ] || [ "$(stat -c %U "$DATA/private")" != app ]; then
     chown -R app:app "$DATA"
 fi
+# Folders added by a newer release are created above as root on an existing install.
+chown app:app "$DATA/db" "$DATA/media" "$DATA/public" "$DATA/private" "$DATA/logs"
 chmod 700 "$DATA/private"
 
 if [ "${DB_CONNECTION:-sqlite}" = sqlite ] && [ ! -f "$DB_DATABASE" ]; then
