@@ -43,6 +43,7 @@ class SettingsTest extends TestCase
             'theme__radius' => 'default',
             'theme__font' => 'system',
             'theme__mode' => 'system',
+            'theme__logo_text' => '1',
         ];
     }
 

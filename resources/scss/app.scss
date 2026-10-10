@@ -118,6 +118,14 @@ $font-family-sans-serif:
     cursor: pointer;
 }
 
+// Site logo (Settings → Appearance), left of the site name in the navbar.
+.wk-logo {
+    height: 2rem;
+    width: auto;
+    max-width: 12rem;
+    object-fit: contain;
+}
+
 // Settings → Appearance accent swatches.
 .wk-swatch {
     width: 2rem;

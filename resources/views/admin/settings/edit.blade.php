@@ -9,7 +9,7 @@
 @endphp
 
 @section('content')
-    <form method="POST" action="{{ route('admin.settings.update') }}" novalidate>
+    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" novalidate>
         @csrf
         @method('PUT')
 
@@ -85,6 +85,27 @@
             <div class="col-lg-6">
                 <fieldset class="card mb-4" x-data="{ accent: @js($v('theme.accent')) }"><div class="card-body">
                     <legend class="h5">{{ __('Appearance') }}</legend>
+                    <div class="mb-3">
+                        <label for="logo" class="form-label">{{ __('Logo') }}</label>
+                        @if ($settings['theme.logo'])
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <img src="{{ app(App\Support\MediaStore::class)->url($settings['theme.logo']) }}" class="wk-logo border rounded p-1" alt="{{ __('Current logo') }}">
+                                <div class="form-check">
+                                    <input id="logo_remove" type="checkbox" name="logo_remove" value="1" class="form-check-input">
+                                    <label for="logo_remove" class="form-check-label">{{ __('Remove logo') }}</label>
+                                </div>
+                            </div>
+                        @endif
+                        <input id="logo" type="file" name="logo" accept="image/png,image/jpeg,image/gif,image/webp"
+                               class="form-control @error('logo') is-invalid @enderror">
+                        <div class="form-text">{{ __('PNG, JPG, GIF or WebP, up to 1 MB. Shown 32 px tall beside the site name.') }}</div>
+                        @error('logo') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input type="hidden" name="theme__logo_text" value="0">
+                        <input id="theme__logo_text" type="checkbox" name="theme__logo_text" value="1" role="switch" class="form-check-input" @checked($v('theme.logo_text'))>
+                        <label for="theme__logo_text" class="form-check-label">{{ __('Show the site name beside the logo') }}</label>
+                    </div>
                     <div class="mb-3">
                         <span class="form-label d-block" id="accent-label">{{ __('Accent colour') }}</span>
                         <div class="d-flex flex-wrap align-items-center gap-2" role="group" aria-labelledby="accent-label">
