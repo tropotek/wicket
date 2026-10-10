@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Role;
+use App\Support\MediaStore;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -12,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * role, active and last_login_at are deliberately not fillable: set them explicitly.
+ * role, active, last_login_at and avatar are deliberately not fillable: set them explicitly.
  */
 #[Fillable(['username', 'name', 'email', 'password', 'timezone'])]
 #[Hidden(['password', 'remember_token'])]
@@ -47,6 +48,19 @@ class User extends Authenticatable
     }
 
     /** True when the user's role is $role or higher. */
+    /** Public URL of the profile photo, or null to show initials. */
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar ? app(MediaStore::class)->url($this->avatar) : null;
+    }
+
+    /** Up to two initials from the name, for the avatar circle when there's no photo. */
+    public function initials(): string
+    {
+        return collect(preg_split('/\s+/', trim($this->name)))->filter()->take(2)
+            ->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->implode('');
+    }
+
     public function hasRole(Role $role): bool
     {
         return $this->role->atLeast($role);

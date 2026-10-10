@@ -30,6 +30,20 @@
                             @method('PUT')
                         @endif
 
+                        @if ($editing)
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                @include('users._avatar', ['user' => $user, 'class' => 'wk-avatar-lg'])
+                                @if ($user->avatar)
+                                    <div class="form-check">
+                                        <input id="avatar_remove" type="checkbox" name="avatar_remove" value="1" class="form-check-input">
+                                        <label for="avatar_remove" class="form-check-label">{{ __('Remove photo') }}</label>
+                                    </div>
+                                @else
+                                    <span class="text-body-secondary small">{{ __('No photo. Users add one on their profile.') }}</span>
+                                @endif
+                            </div>
+                        @endif
+
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label for="username" class="form-label">{{ __('Username') }}</label>
@@ -78,17 +92,23 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-md-6 d-flex align-items-end">
-                                <div class="form-check form-switch mb-2">
-                                    <input type="hidden" name="active" value="{{ $locked ? '1' : '0' }}">
-                                    <input id="active" type="checkbox" name="active" value="1" role="switch"
-                                           class="form-check-input @error('active') is-invalid @enderror"
-                                           @checked(old('active', $user->exists ? $user->active : true)) @disabled($locked)>
-                                    <label for="active" class="form-check-label">{{ __('Active') }}</label>
-                                    @error('active')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                            <div class="col-md-6">
+                                <span class="form-label d-block" id="active-label">{{ __('Status') }}</span>
+                                <div class="wk-switch-field">
+                                    <div class="form-check form-switch mb-0">
+                                        <input type="hidden" name="active" value="{{ $locked ? '1' : '0' }}">
+                                        <input id="active" type="checkbox" name="active" value="1" role="switch" aria-describedby="active-label"
+                                               class="form-check-input @error('active') is-invalid @enderror"
+                                               @checked(old('active', $user->exists ? $user->active : true)) @disabled($locked)>
+                                        <label for="active" class="form-check-label">{{ __('Active') }}</label>
+                                    </div>
                                 </div>
+                                @if ($locked)
+                                    <div class="form-text">{{ __('You cannot deactivate yourself.') }}</div>
+                                @endif
+                                @error('active')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 

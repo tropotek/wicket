@@ -18,10 +18,30 @@
                 <div class="card-body p-4">
                     <h2 class="h5 mb-3">{{ __('Details') }}</h2>
 
-                    <form method="POST" action="{{ route('profile.update') }}" novalidate
+                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" novalidate
                           x-data="{ email: @js(old('email', $user->email)), original: @js($user->email) }">
                         @csrf
                         @method('PATCH')
+
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            @include('users._avatar', ['user' => $user, 'class' => 'wk-avatar-lg'])
+                            <div class="flex-grow-1">
+                                <label for="avatar" class="form-label">{{ __('Photo') }}</label>
+                                <input id="avatar" type="file" name="avatar" accept="image/png,image/jpeg,image/gif,image/webp"
+                                       class="form-control @error('avatar') is-invalid @enderror">
+                                @error('avatar')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @else
+                                    <div class="form-text">{{ __('PNG, JPG, GIF or WebP, up to 4 MB. Cropped to a square.') }}</div>
+                                @enderror
+                                @if ($user->avatar)
+                                    <div class="form-check mt-1">
+                                        <input id="avatar_remove" type="checkbox" name="avatar_remove" value="1" class="form-check-input">
+                                        <label for="avatar_remove" class="form-check-label">{{ __('Remove photo') }}</label>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
 
                         <div class="mb-3">
                             <label for="username" class="form-label">{{ __('Username') }}</label>

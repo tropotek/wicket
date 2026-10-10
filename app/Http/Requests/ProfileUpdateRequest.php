@@ -25,6 +25,7 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
             'timezone' => ['nullable', 'string', 'timezone:all'],
+            'avatar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:4096'],
             // Email is the password-reset channel, so changing it needs the password.
             'current_password' => [
                 Rule::requiredIf(fn () => $this->input('email') !== $this->user()->email),

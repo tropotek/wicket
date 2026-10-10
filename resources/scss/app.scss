@@ -106,6 +106,17 @@ $font-family-sans-serif:
     background-color: var(--bs-primary-bg-subtle);
 }
 
+img.wk-avatar {
+    object-fit: cover;
+}
+
+.wk-avatar-lg {
+    width: 4rem;
+    height: 4rem;
+    flex-shrink: 0;
+    font-size: 1.25rem;
+}
+
 // Unchecked radios and checkboxes: Bootstrap's light border all but vanishes on table rows.
 .form-check-input:not(:checked) {
     border-color: rgba(var(--bs-emphasis-color-rgb), .4);
@@ -124,6 +135,13 @@ $font-family-sans-serif:
     width: auto;
     max-width: 12rem;
     object-fit: contain;
+}
+
+// A switch in a form row, centred on the height of the inputs beside it.
+.wk-switch-field {
+    display: flex;
+    align-items: center;
+    min-height: calc(1.5em + .75rem + calc(var(--bs-border-width) * 2));
 }
 
 // Settings → Appearance accent swatches.

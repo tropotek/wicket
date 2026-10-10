@@ -6,6 +6,7 @@ use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
+use App\Support\Avatars;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -66,7 +67,7 @@ class UserController extends Controller
     }
 
     /** Authorised by UserRequest. */
-    public function update(UserRequest $request, User $user): RedirectResponse
+    public function update(UserRequest $request, User $user, Avatars $avatars): RedirectResponse
     {
         $user->fill($request->safe()->only(['username', 'name', 'email']));
         $user->forceFill([
@@ -82,6 +83,11 @@ class UserController extends Controller
         }
 
         $user->save();
+
+        // Admins can take a photo down, not upload one for someone else.
+        if ($request->boolean('avatar_remove')) {
+            $avatars->remove($user);
+        }
 
         return redirect()->route('admin.users.index')
             ->with('status', __('Saved :username.', ['username' => $user->username]));

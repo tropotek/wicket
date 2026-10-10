@@ -73,11 +73,10 @@
                     </li>
 
                     @auth
-                        @php($initials = collect(preg_split('/\s+/', trim(auth()->user()->name)))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->implode(''))
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false" title="{{ auth()->user()->name }}">
-                                <span class="wk-avatar" aria-hidden="true">{{ $initials }}</span>
+                                @include('users._avatar', ['user' => auth()->user()])
                                 <span class="d-none d-lg-inline ms-2">{{ auth()->user()->name }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">

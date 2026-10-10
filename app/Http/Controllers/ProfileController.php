@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Support\Avatars;
 use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, Avatars $avatars): RedirectResponse
     {
         $user = $request->user();
 
@@ -32,6 +33,12 @@ class ProfileController extends Controller
         }
 
         $user->save();
+
+        if ($request->hasFile('avatar')) {
+            $avatars->store($user, $request->file('avatar'));
+        } elseif ($request->boolean('avatar_remove')) {
+            $avatars->remove($user);
+        }
 
         return redirect()->route('profile.edit')->with('status', __('Profile saved.'));
     }
