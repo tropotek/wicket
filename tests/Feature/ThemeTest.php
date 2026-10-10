@@ -64,4 +64,36 @@ class ThemeTest extends TestCase
         Settings::set(['theme.mode' => 'dark']);
         $this->get('/login')->assertSee("const fallback = 'dark'", false);
     }
+
+    public function test_favicon_defaults_to_blue_with_white_stumps(): void
+    {
+        $svg = app(Theme::class)->favicon();
+
+        $this->assertStringStartsWith('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">', $svg);
+        $this->assertStringContainsString('fill="#0d6efd"', $svg);
+        $this->assertSame(5, substr_count($svg, 'fill="#fff"'));
+    }
+
+    public function test_favicon_follows_the_accent(): void
+    {
+        Settings::set(['theme.accent' => '#6F42C1']);
+        $this->assertStringContainsString('fill="#6f42c1"', app(Theme::class)->favicon());
+
+        Settings::set(['theme.accent' => '#ffc107']);
+        $this->assertSame(5, substr_count(app(Theme::class)->favicon(), 'fill="#000"'));
+
+        Settings::set(['theme.accent' => 'red;"><script>']);
+        $this->assertStringContainsString('fill="#0d6efd"', app(Theme::class)->favicon());
+    }
+
+    public function test_head_links_the_svg_favicon_and_ico_fallback(): void
+    {
+        Settings::set(['theme.accent' => '#198754']);
+        $html = $this->get('/login')->assertOk()->getContent();
+
+        $this->assertStringContainsString('<link rel="icon" href="/favicon.ico" sizes="32x32">', $html);
+        $this->assertStringContainsString('<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,', $html);
+        $this->assertStringContainsString(rawurlencode('fill="#198754"'), $html);
+        $this->assertStringContainsString('<link rel="apple-touch-icon" href="/apple-touch-icon.png">', $html);
+    }
 }

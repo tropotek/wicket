@@ -70,6 +70,25 @@ class Theme
         return $this->block('html:root', $root).implode('', $rules);
     }
 
+    /** The stumps-badge favicon as SVG: an accent tile with stumps and bails in the accent's button-text colour. */
+    public function favicon(): string
+    {
+        $accent = strtolower((string) $this->settings->get('theme.accent', self::DEFAULT_ACCENT));
+        if (! preg_match('/^#[0-9a-f]{6}$/', $accent)) {
+            $accent = self::DEFAULT_ACCENT;
+        }
+        $on = $this->contrast($this->rgb($accent));
+
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
+            ."<rect x=\"1\" y=\"1\" width=\"30\" height=\"30\" rx=\"7\" fill=\"{$accent}\"/>"
+            ."<rect x=\"9\" y=\"12\" width=\"3\" height=\"14\" rx=\".8\" fill=\"{$on}\"/>"
+            ."<rect x=\"14.5\" y=\"12\" width=\"3\" height=\"14\" rx=\".8\" fill=\"{$on}\"/>"
+            ."<rect x=\"20\" y=\"12\" width=\"3\" height=\"14\" rx=\".8\" fill=\"{$on}\"/>"
+            ."<rect x=\"8.5\" y=\"8\" width=\"7\" height=\"2.4\" rx=\"1.2\" fill=\"{$on}\"/>"
+            ."<rect x=\"16.5\" y=\"8\" width=\"7\" height=\"2.4\" rx=\"1.2\" fill=\"{$on}\"/>"
+            .'</svg>';
+    }
+
     /** @return array{0: array<string, string>, 1: list<string>} :root variables, extra rules */
     private function accent(string $hex): array
     {
