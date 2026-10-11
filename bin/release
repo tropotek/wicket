@@ -27,15 +27,16 @@ if git rev-parse -q --verify "refs/tags/$version" >/dev/null; then
 fi
 
 echo "==> Code style"
-docker compose exec -T app vendor/bin/pint --test
+# Without </dev/null, docker reads the terminal's input and takes the answer to the question below.
+docker compose exec -T app vendor/bin/pint --test </dev/null
 
 echo "==> Tests"
-docker compose exec -T app php artisan test
+docker compose exec -T app php artisan test </dev/null
 
 since="$(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)"
 if ! git diff --quiet "$since" HEAD -- app/Import app/Console/Commands/Import.php tests/Support/LegacyFixture.php; then
     echo "==> Importer changed since the last release; running its tests"
-    docker compose exec -T app php artisan test --group=import
+    docker compose exec -T app php artisan test --group=import </dev/null
 fi
 
 git tag -a "$version" -m "Release $version"
