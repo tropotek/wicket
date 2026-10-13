@@ -36,7 +36,9 @@ import 'tinymce/plugins/wordcount';
 export function mountEditors() {
     const theme = document.documentElement.dataset.bsTheme === 'dark' ? 'dark' : 'light';
 
-    document.querySelectorAll('textarea[data-editor]').forEach((textarea) => {
+    const large = window.matchMedia('(min-width: 992px)');
+
+    const mount = (textarea) => {
         tinymce.init({
             target: textarea,
             license_key: 'gpl',
@@ -73,6 +75,8 @@ export function mountEditors() {
             ],
             toolbar: 'save wikiPage wikiSecret | bold italic strikethrough | blocks | alignleft aligncenter alignright alignjustify'
                 + ' | bullist numlist outdent indent | link image media table codesample | removeformat code fullscreen',
+            // Buttons that don't fit go onto a second row on a large screen, and behind "…" on a small one.
+            toolbar_mode: large.matches ? 'wrap' : 'floating',
             menubar: 'edit view insert format table tools help',
             contextmenu: false,
             statusbar: false,
@@ -102,6 +106,18 @@ export function mountEditors() {
                     editor.getDoc().documentElement.dataset.bsTheme = theme;
                 });
             },
+        });
+    };
+
+    document.querySelectorAll('textarea[data-editor]').forEach(mount);
+
+    // TinyMCE fixes the toolbar mode when it starts, so crossing the breakpoint starts each editor
+    // again; remove() writes its content back to the textarea first.
+    large.addEventListener('change', () => {
+        tinymce.get().forEach((editor) => {
+            const textarea = editor.targetElm;
+            editor.remove();
+            mount(textarea);
         });
     });
 }
