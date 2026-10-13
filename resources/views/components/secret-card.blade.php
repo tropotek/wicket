@@ -6,7 +6,7 @@
 @php
     $copyLabel = fn (string $what) => __('Copy :what', ['what' => $what]);
 @endphp
-<div {{ $attributes->class('card wk-secret d-inline-block align-top my-1') }} style="min-width: 16rem; max-width: 26rem"
+<div {{ $attributes->class('card wk-secret align-top my-1') }}
      x-data="secretCard(@js(route('secrets.reveal', $secret)))">
     <div class="card-body p-2">
         <div class="d-flex align-items-center gap-2 mb-1">
@@ -26,11 +26,11 @@
             @endcan
         </div>
 
-        <dl class="row g-0 small mb-0">
+        <dl class="wk-secret-fields small mb-0">
             @if ($secret->username)
-                <dt class="col-3 fw-normal text-body-secondary" :class="copied === 'username' && 'wk-copied'">{{ __('User') }}</dt>
-                <dd class="col-9 mb-1 d-flex align-items-center gap-1" :class="copied === 'username' && 'wk-copied'">
-                    <span class="font-monospace text-truncate">{{ $secret->username }}</span>
+                <dt class="fw-normal text-body-secondary" :class="copied === 'username' && 'wk-copied'">{{ __('User') }}</dt>
+                <dd class="mb-1 d-flex align-items-center gap-1" :class="copied === 'username' && 'wk-copied'">
+                    <span class="font-monospace text-truncate" title="{{ $secret->username }}">{{ $secret->username }}</span>
                     <button type="button" class="btn btn-link btn-sm p-0 ms-auto" @click="copy('username', @js($secret->username))"
                             :title="copied === 'username' ? @js(__('Copied')) : @js($copyLabel(__('username')))" aria-label="{{ $copyLabel(__('username')) }}">
                         <i class="fa-solid" :class="copied === 'username' ? 'fa-check text-success' : 'fa-copy'"></i>
@@ -39,9 +39,9 @@
             @endif
 
             @if ($secret->password)
-                <dt class="col-3 fw-normal text-body-secondary" :class="copied === 'password' && 'wk-copied'">{{ __('Password') }}</dt>
-                <dd class="col-9 mb-1 d-flex align-items-center gap-1" :class="copied === 'password' && 'wk-copied'">
-                    <span class="font-monospace text-break" x-show="showPassword" x-text="values?.password" x-cloak></span>
+                <dt class="fw-normal text-body-secondary" :class="copied === 'password' && 'wk-copied'">{{ __('Password') }}</dt>
+                <dd class="mb-1 d-flex align-items-center gap-1" :class="copied === 'password' && 'wk-copied'">
+                    <span class="font-monospace text-truncate" x-show="showPassword" x-text="values?.password" :title="values?.password" x-cloak></span>
                     <span class="font-monospace" x-show="! showPassword">••••••••</span>
                     <span class="ms-auto d-flex gap-2">
                         <button type="button" class="btn btn-link btn-sm p-0" @click="togglePassword()" :disabled="busy"
@@ -57,8 +57,8 @@
             @endif
 
             @if ($secret->otp)
-                <dt class="col-3 fw-normal text-body-secondary" :class="copied === 'otp' && 'wk-copied'">{{ __('2FA') }}</dt>
-                <dd class="col-9 mb-1 d-flex align-items-center gap-2" :class="copied === 'otp' && 'wk-copied'">
+                <dt class="fw-normal text-body-secondary" :class="copied === 'otp' && 'wk-copied'">{{ __('2FA') }}</dt>
+                <dd class="mb-1 d-flex align-items-center gap-2" :class="copied === 'otp' && 'wk-copied'">
                     <button type="button" class="btn btn-outline-secondary btn-sm py-0" x-show="! otp" @click="toggleOtp()" :disabled="busy">
                         {{ __('Show code') }}
                     </button>

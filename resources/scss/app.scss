@@ -27,6 +27,46 @@ $font-family-sans-serif:
 
 [x-cloak] { display: none !important; }
 
+// A secret card on its own is as wide as its longest line, within these limits. As the child of
+// a Bootstrap column it fills the column, width and height, so a row of cards tiles evenly.
+.wk-secret {
+    display: inline-block;
+    min-width: 16rem;
+    max-width: min(26rem, 100%);
+
+    .row > * > & {
+        display: block;
+        flex-grow: 1;
+        min-width: 0;
+        max-width: none;
+    }
+}
+
+.row > :has(> .wk-secret) {
+    display: flex;
+    flex-direction: column;
+}
+
+// Labels take the width of the longest one; a value that runs out of room is cut with an ellipsis.
+.wk-secret-fields {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: .75rem;
+
+    dt,
+    dd {
+        white-space: nowrap;
+    }
+
+    dd {
+        min-width: 0;
+
+        > .text-truncate {
+            min-width: 0;
+        }
+    }
+}
+
 // A copied line of a secret card fades its text in, so the click is seen to have worked.
 .wk-secret .wk-copied {
     animation: wk-copied .25s ease-in;
