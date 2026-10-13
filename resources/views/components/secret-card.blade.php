@@ -28,8 +28,8 @@
 
         <dl class="row g-0 small mb-0">
             @if ($secret->username)
-                <dt class="col-3 fw-normal text-body-secondary">{{ __('User') }}</dt>
-                <dd class="col-9 mb-1 d-flex align-items-center gap-1">
+                <dt class="col-3 fw-normal text-body-secondary" :class="copied === 'username' && 'wk-copied'">{{ __('User') }}</dt>
+                <dd class="col-9 mb-1 d-flex align-items-center gap-1" :class="copied === 'username' && 'wk-copied'">
                     <span class="font-monospace text-truncate">{{ $secret->username }}</span>
                     <button type="button" class="btn btn-link btn-sm p-0 ms-auto" @click="copy('username', @js($secret->username))"
                             :title="copied === 'username' ? @js(__('Copied')) : @js($copyLabel(__('username')))" aria-label="{{ $copyLabel(__('username')) }}">
@@ -39,8 +39,8 @@
             @endif
 
             @if ($secret->password)
-                <dt class="col-3 fw-normal text-body-secondary">{{ __('Password') }}</dt>
-                <dd class="col-9 mb-1 d-flex align-items-center gap-1">
+                <dt class="col-3 fw-normal text-body-secondary" :class="copied === 'password' && 'wk-copied'">{{ __('Password') }}</dt>
+                <dd class="col-9 mb-1 d-flex align-items-center gap-1" :class="copied === 'password' && 'wk-copied'">
                     <span class="font-monospace text-break" x-show="showPassword" x-text="values?.password" x-cloak></span>
                     <span class="font-monospace" x-show="! showPassword">••••••••</span>
                     <span class="ms-auto d-flex gap-2">
@@ -57,8 +57,8 @@
             @endif
 
             @if ($secret->otp)
-                <dt class="col-3 fw-normal text-body-secondary">{{ __('2FA') }}</dt>
-                <dd class="col-9 mb-1 d-flex align-items-center gap-2">
+                <dt class="col-3 fw-normal text-body-secondary" :class="copied === 'otp' && 'wk-copied'">{{ __('2FA') }}</dt>
+                <dd class="col-9 mb-1 d-flex align-items-center gap-2" :class="copied === 'otp' && 'wk-copied'">
                     <button type="button" class="btn btn-outline-secondary btn-sm py-0" x-show="! otp" @click="toggleOtp()" :disabled="busy">
                         {{ __('Show code') }}
                     </button>
@@ -74,12 +74,12 @@
                             <span class="text-body-secondary" x-text="otp.remaining + 's'"></span>
                         </span>
                     </template>
-                    <span class="ms-auto d-flex gap-2" x-show="otp" x-cloak>
-                        <button type="button" class="btn btn-link btn-sm p-0" @click="copy('otp')"
+                    <span class="ms-auto d-flex gap-2">
+                        <button type="button" class="btn btn-link btn-sm p-0" @click="copy('otp')" :disabled="busy"
                                 :title="copied === 'otp' ? @js(__('Copied')) : @js($copyLabel(__('code')))" aria-label="{{ $copyLabel(__('code')) }}">
                             <i class="fa-solid" :class="copied === 'otp' ? 'fa-check text-success' : 'fa-copy'"></i>
                         </button>
-                        <button type="button" class="btn btn-link btn-sm p-0" @click="toggleOtp()" aria-label="{{ __('Hide code') }}">
+                        <button type="button" class="btn btn-link btn-sm p-0" x-show="otp" x-cloak @click="toggleOtp()" aria-label="{{ __('Hide code') }}">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </span>
@@ -95,7 +95,7 @@
             <div x-show="showNotes" x-cloak class="small mt-1">
                 <template x-if="values?.keys">
                     <div class="mb-1">
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center" :class="copied === 'keys' && 'wk-copied'">
                             <span class="text-body-secondary me-auto">{{ __('Keys') }}</span>
                             <button type="button" class="btn btn-link btn-sm p-0" @click="copy('keys')" aria-label="{{ $copyLabel(__('keys')) }}">
                                 <i class="fa-solid" :class="copied === 'keys' ? 'fa-check text-success' : 'fa-copy'"></i>

@@ -27,6 +27,17 @@ $font-family-sans-serif:
 
 [x-cloak] { display: none !important; }
 
+// A copied line of a secret card fades its text in, so the click is seen to have worked.
+.wk-secret .wk-copied {
+    animation: wk-copied .25s ease-in;
+}
+
+@keyframes wk-copied {
+    from {
+        opacity: 0;
+    }
+}
+
 // Navbar: menu and tools are plain links with a soft hover, no button chrome.
 .navbar .nav-link {
     border-radius: var(--bs-border-radius);

@@ -36,6 +36,7 @@ export default (revealUrl) => ({
         }
     },
 
+    /** Showing the password copies it too. */
     async togglePassword() {
         clearTimeout(this.timers.password);
         if (this.showPassword) {
@@ -45,6 +46,7 @@ export default (revealUrl) => ({
         await this.load();
         this.showPassword = true;
         this.timers.password = setTimeout(() => (this.showPassword = false), 30000);
+        await this.copy('password');
     },
 
     async toggleNotes() {
@@ -53,11 +55,16 @@ export default (revealUrl) => ({
     },
 
     async toggleOtp() {
-        clearInterval(this.timers.otp);
         if (this.otp) {
+            clearInterval(this.timers.otp);
             this.otp = null;
             return;
         }
+        await this.showOtp();
+    },
+
+    async showOtp() {
+        clearInterval(this.timers.otp);
         await this.refreshOtp();
         this.timers.otp = setInterval(() => {
             if (! this.otp) return;
@@ -77,13 +84,20 @@ export default (revealUrl) => ({
         return this.otp ? c * (1 - this.otp.remaining / this.otp.period) : c;
     },
 
+    /** Copies a value, fetching it first if it is not held. The 2FA code is shown as it is copied. */
     async copy(what, text) {
         try {
-            if (text === undefined) {
-                const values = what === 'otp' ? null : await this.load();
-                text = what === 'otp' ? this.otp?.code : values[what];
+            if (what === 'otp') {
+                if (! this.otp) await this.showOtp();
+                text = this.otp?.code;
+            } else if (text === undefined) {
+                text = (await this.load())[what];
             }
-            await copyText(text ?? '');
+            if (! text) throw new Error('nothing to copy');
+            await copyText(text);
+            // Cleared first, so copying the same line again replays its flash.
+            this.copied = '';
+            await this.$nextTick();
             this.copied = what;
             clearTimeout(this.timers.copied);
             this.timers.copied = setTimeout(() => (this.copied = ''), 1500);
