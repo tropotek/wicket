@@ -147,7 +147,7 @@ class MenuTest extends TestCase
 
         $this->assertSame(['Public'], $this->names());
         $this->assertSame(
-            ['Public', 'More[Members, Editors, -, Private]'],
+            ['Public', 'More[Members, Editors, -, Private, Secret tiles]'],
             $this->names(User::where('username', 'admin')->first()),
         );
     }

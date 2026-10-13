@@ -25,6 +25,7 @@ class DevMenuSeeder extends Seeder
             [MenuItemType::Item, 'Editors', 'editors-page'],
             [MenuItemType::Divider, '', null],
             [MenuItemType::Item, 'Private', 'private-page'],
+            [MenuItemType::Item, 'Secret tiles', 'secret-tiles'],
         ];
 
         foreach ($children as $i => [$type, $name, $slug]) {
