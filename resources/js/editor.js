@@ -34,11 +34,11 @@ import 'tinymce/plugins/wordcount';
  * so content looks as it will on the page. The save plugin (and Ctrl+S) submits the surrounding form.
  */
 export function mountEditors() {
-    const theme = document.documentElement.dataset.bsTheme === 'dark' ? 'dark' : 'light';
-
     const large = window.matchMedia('(min-width: 992px)');
 
     const mount = (textarea) => {
+        const theme = document.documentElement.dataset.bsTheme === 'dark' ? 'dark' : 'light';
+
         tinymce.init({
             target: textarea,
             license_key: 'gpl',
@@ -73,8 +73,10 @@ export function mountEditors() {
                 { text: 'Java', value: 'java' },
                 { text: 'Arduino', value: 'arduino' },
             ],
-            toolbar: 'save wikiPage wikiSecret | bold italic strikethrough | blocks | alignleft aligncenter alignright alignjustify'
-                + ' | bullist numlist outdent indent | link image media table codesample | removeformat code fullscreen',
+            // toolbar: 'save wikiPage wikiSecret | bold italic strikethrough | blocks | alignleft aligncenter alignright alignjustify'
+            //     + ' | bullist numlist outdent indent | link image media table codesample | removeformat code fullscreen',
+            toolbar: 'save wikiPage wikiSecret | link image media table codesample | bold italic strikethrough | alignleft aligncenter alignright alignjustify'
+                + ' | bullist numlist outdent indent | removeformat code fullscreen',
             // Buttons that don't fit go onto a second row on a large screen, and behind "…" on a small one.
             toolbar_mode: large.matches ? 'wrap' : 'floating',
             menubar: 'edit view insert format table tools help',
@@ -86,7 +88,8 @@ export function mountEditors() {
             images_upload_handler: (blobInfo, progress) => uploadImage(textarea.dataset.uploadUrl, blobInfo, progress),
             file_picker_types: 'file image media',
             file_picker_callback: (callback, value, meta) => pickMedia(textarea.dataset.mediaUrl, callback, meta),
-            extended_valid_elements: 'i[*],em[*],b[*],a[*],div[*],span[*],img[*],wk-secret[data-id|contenteditable]',
+            // #i: pad empty <i> so a lone icon is never dropped; keepIconsEmpty strips the pad on save.
+            extended_valid_elements: '#i[*],em[*],b[*],a[*],div[*],span[*],img[*],wk-secret[data-id|contenteditable]',
             custom_elements: '~wk-secret',
             relative_urls: false,
             remove_script_host: true,
@@ -104,6 +107,7 @@ export function mountEditors() {
                 }
                 editor.on('PreInit', () => {
                     editor.getDoc().documentElement.dataset.bsTheme = theme;
+                    keepIconsEmpty(editor);
                 });
             },
         });
@@ -111,15 +115,28 @@ export function mountEditors() {
 
     document.querySelectorAll('textarea[data-editor]').forEach(mount);
 
-    // TinyMCE fixes the toolbar mode when it starts, so crossing the breakpoint starts each editor
-    // again; remove() writes its content back to the textarea first.
-    large.addEventListener('change', () => {
+    // TinyMCE fixes the toolbar mode and skin when it starts, so crossing the breakpoint or switching
+    // the theme starts each editor again; remove() writes its content back to the textarea first.
+    const remountAll = () => {
         tinymce.get().forEach((editor) => {
             const textarea = editor.targetElm;
             editor.remove();
             mount(textarea);
         });
-    });
+    };
+
+    large.addEventListener('change', remountAll);
+    new MutationObserver(remountAll).observe(document.documentElement, { attributeFilter: ['data-bs-theme'] });
+}
+
+/** Saves Font Awesome icons (<i class="fa-…">) empty, without the &nbsp; the #i rule pads them with in the editor. */
+function keepIconsEmpty(editor) {
+    editor.serializer.addNodeFilter('i', (nodes) => nodes.forEach((node) => {
+        const pad = node.firstChild;
+        if (pad && pad === node.lastChild && pad.type === 3 && pad.value === '\u00a0' && /\bfa-/.test(node.attr('class') || '')) {
+            pad.remove();
+        }
+    }));
 }
 
 /**

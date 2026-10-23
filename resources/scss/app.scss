@@ -92,7 +92,11 @@ $font-family-sans-serif:
     }
 }
 
-@include media-breakpoint-up(md) {
+.navbar-nav .nav-link {
+    white-space: nowrap;
+}
+
+@include media-breakpoint-up(lg) {
     .navbar-nav .nav-link {
         padding-left: .6rem;
         padding-right: .6rem;
@@ -109,7 +113,7 @@ $font-family-sans-serif:
         border: 0;
     }
 
-    // Stays a floating menu below md too (Bootstrap makes navbar dropdowns static there).
+    // Stays a floating menu below lg too (Bootstrap makes navbar dropdowns static there).
     .dropdown-menu {
         position: absolute;
     }
@@ -241,4 +245,11 @@ img.wk-avatar {
         margin-left: .25em;
         vertical-align: super;
     }
+}
+
+// TinyMCE toolbar at 75%: zoom scales the buttons, icons and row lines together.
+.tox .tox-editor-header > .tox-toolbar,
+.tox .tox-editor-header > .tox-toolbar-overlord,
+.tox-silver-sink .tox-toolbar__overflow > .tox-toolbar__group {
+    zoom: .75;
 }

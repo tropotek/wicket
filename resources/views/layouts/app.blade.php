@@ -6,7 +6,7 @@
 <body class="d-flex flex-column min-vh-100"
       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'>
 
-    <nav class="navbar navbar-expand-md border-bottom">
+    <nav class="navbar navbar-expand-lg border-bottom">
         <div class="container">
             <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="{{ url('/') }}">
                 @if ($logo = App\Facades\Settings::get('theme.logo'))
@@ -22,7 +22,7 @@
                         aria-controls="main-menu" aria-expanded="false" aria-label="{{ __('Toggle menu') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse order-last order-md-0" id="main-menu">
+                <div class="collapse navbar-collapse order-last order-lg-0" id="main-menu">
                     <ul class="navbar-nav">
                         @foreach ($menu as $item)
                             @include('menu._item', ['item' => $item, 'level' => 0])
@@ -40,7 +40,7 @@
                      },
                  }">
                 @unless (request()->routeIs('search'))
-                    <form method="GET" action="{{ route('search') }}" role="search" class="wk-nav-search d-none d-md-block me-2">
+                    <form method="GET" action="{{ route('search') }}" role="search" class="wk-nav-search d-none d-xl-block me-2">
                         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                         <input type="search" name="q" class="form-control form-control-sm"
                                placeholder="{{ __('Search pages') }}" aria-label="{{ __('Search pages') }}">
@@ -48,7 +48,7 @@
                 @endunless
                 <ul class="navbar-nav flex-row align-items-center">
                     @unless (request()->routeIs('search'))
-                        <li class="nav-item d-md-none">
+                        <li class="nav-item d-xl-none">
                             <a class="nav-link" href="{{ route('search') }}" title="{{ __('Search') }}" aria-label="{{ __('Search') }}">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                             </a>
@@ -58,8 +58,8 @@
                     @can('create', App\Models\Page::class)
                         <li class="nav-item">
                             <a @class(['nav-link', 'active' => request()->routeIs('pages.create')])
-                               href="{{ route('pages.create') }}" title="{{ __('New page') }}">
-                                <i class="fa-solid fa-plus"></i><span class="d-none d-lg-inline ms-1">{{ __('New page') }}</span>
+                               href="{{ route('pages.create') }}" title="{{ __('New page') }}" aria-label="{{ __('New page') }}">
+                                <i class="fa-solid fa-plus"></i>
                             </a>
                         </li>
                     @endcan
@@ -77,7 +77,7 @@
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false" title="{{ auth()->user()->name }}">
                                 @include('users._avatar', ['user' => auth()->user()])
-                                <span class="d-none d-lg-inline ms-2">{{ auth()->user()->name }}</span>
+                                <span class="d-none d-xl-inline ms-2">{{ auth()->user()->name }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
