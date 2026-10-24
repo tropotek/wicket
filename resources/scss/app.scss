@@ -222,6 +222,14 @@ img.wk-avatar {
 
 // Page links in rendered content (App\Html\Passes\InternalLinks).
 .wk-content {
+    a:not(.btn) {
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
     a.wk-page-new {
         color: var(--bs-danger);
         text-decoration-style: dashed;
@@ -243,7 +251,9 @@ img.wk-avatar {
         font: var(--fa-font-solid);
         font-size: .7em;
         margin-left: .25em;
-        vertical-align: super;
+        // inline-block keeps the link's underline off the icon.
+        display: inline-block;
+        vertical-align: .12em;
     }
 }
 
