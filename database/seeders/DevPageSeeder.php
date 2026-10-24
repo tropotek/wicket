@@ -10,8 +10,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * One dev page per visibility level, authored by the seeded editor. The private page also shows
- * a few example secrets, and a second private page tiles them.
+ * One dev page per visibility level, authored by the seeded editor. The public page also shows
+ * the kinds of link, the private page a few example secrets, and a second private page tiles them.
  */
 class DevPageSeeder extends Seeder
 {
@@ -37,6 +37,10 @@ class DevPageSeeder extends Seeder
 
             $html = "<p>This page is <strong>{$visibility->label()}</strong>.</p>\n<p>".fake()->paragraph().'</p>';
 
+            if ($visibility === Visibility::Public) {
+                $html .= "\n".$this->links();
+            }
+
             if ($visibility === Visibility::Private) {
                 $html .= "\n<h2>Secrets</h2>\n<p>".implode("</p>\n<p>", $secrets).'</p>';
             }
@@ -57,6 +61,24 @@ class DevPageSeeder extends Seeder
             'html' => $this->tiles($secrets),
             'description' => 'Seeded secret layouts',
         ]);
+    }
+
+    /**
+     * Each kind of link: other sites get the external-link icon unless shown as a button or image;
+     * links within the site get neither.
+     */
+    private function links(): string
+    {
+        return <<<'HTML'
+            <h2>Links</h2>
+            <p>Other sites: <a href="https://laravel.com/docs">Laravel docs</a>, <a href="https://www.php.net/">PHP</a> and <a href="http://example.com">plain http</a>, in a sentence.</p>
+            <ul>
+            <li><a href="https://github.com/tropotek/wicket">Wicket on GitHub</a></li>
+            <li><a href="https://getbootstrap.com/docs/5.3/">Bootstrap 5.3</a></li>
+            </ul>
+            <p><a class="btn btn-primary" href="https://github.com/tropotek/wicket">A button to another site</a></p>
+            <p>Within the site: <a href="/members-page">Members page</a> and <a href="/">home</a>.</p>
+            HTML;
     }
 
     /**
