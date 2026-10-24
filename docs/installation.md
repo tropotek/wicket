@@ -1,7 +1,7 @@
 # Installation
 
-You need Docker with the Compose plugin. Copy [`docker-compose-live.yml`](https://github.com/tropotek/wicket/blob/main/docker-compose-live.yml)
-into an empty directory (e.g. `/srv/wicket`) and add a `.env` next to it:
+You need Docker with the Compose plugin. Copy [`docker-compose-example.yml`](https://github.com/tropotek/wicket/blob/main/docker-compose-example.yml)
+into an empty directory (e.g. `/srv/wicket`) as `docker-compose-live.yml`, and add a `.env` next to it:
 
 ```ini
 APP_URL=https://wiki.example.org

@@ -8,7 +8,7 @@ image (FrankenPHP + SQLite) with everything it stores in a single `data/` direct
 
 ## Quick start
 
-Copy [`docker-compose-live.yml`](docker-compose-live.yml) into an empty directory, then:
+Copy [`docker-compose-example.yml`](docker-compose-example.yml) into an empty directory as `docker-compose-live.yml`, then:
 
 ```sh
 echo "WICKET_ADMIN_EMAIL=you@example.org" > .env

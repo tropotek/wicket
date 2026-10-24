@@ -1,4 +1,6 @@
 # Wicket — production compose for operators.
+# Copy this file to docker-compose-live.yml in a directory of its own (that name is what
+# livesites.sh looks for), with a .env beside it.
 #
 #   docker compose -f docker-compose-live.yml up -d        start (migrations run automatically)
 #   docker compose -f docker-compose-live.yml pull && \
@@ -20,7 +22,7 @@
 # data/private/.app-key decrypts every stored secret: keep it with the database, never lose it.
 # (Rotating APP_KEY needs the old one in APP_PREVIOUS_KEYS or secrets become unreadable.)
 
-name: wicket-live  # distinct from the dev stack (docker-compose.yml) on the same machine
+name: z-wicket  # distinct from the dev stack (docker-compose.yml) on the same machine
 
 services:
   wicket:
